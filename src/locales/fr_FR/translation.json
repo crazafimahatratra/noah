@@ -1,0 +1,189 @@
+{
+  "appbar": {
+    "logout": "Deconnecter",
+    "my-account": "Mon Compte"
+  },
+  "auth": {
+    "company-description": "Gestion des Ressources Humaines",
+    "company-name": "Chraz",
+    "errors": {
+      "general-error": "Une erreur s'est produite",
+      "wrong-credentials": "Login ou mot de passe erroné"
+    },
+    "form": {
+      "email": "Email",
+      "password": "Mot de passe",
+      "remember-me": "Se souvenir de moi",
+      "submit": "Connexion"
+    },
+    "title": "Connectez-vous"
+  },
+  "common": {
+    "cancel": "Annuler",
+    "confirm-delete": "Confirmation de suppression",
+    "delete": "Supprimer",
+    "edit": "Editer",
+    "email": "Email",
+    "female": "Feminin",
+    "firstname": "Prénom",
+    "gender": "Sexe",
+    "male": "Masculin",
+    "name": "Nom",
+    "none": "Aucun",
+    "phone": "Téléphone",
+    "save": "Enregistrer",
+    "search": "Rechercher",
+    "to": "à"
+  },
+  "directory": {
+    "edit": {
+      "contracts": "Contrats",
+      "coordinates": "Coordonnées",
+      "forms": {
+        "admin": "Administrateur",
+        "contract-type": "Type de Contrat",
+        "department": "Département",
+        "qualification": "Qualification",
+        "user": "Simple Utilisateur",
+        "user-type": "Type d'Utilisateur"
+      },
+      "infos": "Infos",
+      "title-create": "Nouvel Employé",
+      "title-edit": "Editer l'Employé"
+    },
+    "employes": {
+      "address": "Adresse",
+      "birthdate": "Date de naissance",
+      "cnaps": "CNAPS",
+      "confirm-delete": "Etes vous sur de vouloir supprimer l'employé <1>{{matricule}}</1> ? <br/>Cette action est Irreversible",
+      "emergency-contact": "Contact d'urgence",
+      "hiring-date": "Date d'embauche",
+      "jobtitle": "Poste",
+      "matricule": "Matricule",
+      "new-employe": "Nouvel Employé",
+      "ostie": "OSTIE",
+      "other-infos": "Autres infos",
+      "reset-password": "Reinitialiser le mot de passe",
+      "security": "Sécurité",
+      "title": "Employés",
+      "tooltip": {
+        "delete": "Supprimer cet employé",
+        "edit": "Editer l'employé",
+        "security": "Configurer les accès de cet employé"
+      }
+    }
+  },
+  "errors": {
+    "EMPLOYE_CONTRACTTYPE_REQUIRED": "Veuillez choisir un type de contrat",
+    "EMPLOYE_DEPARTMENT_REQUIRED": "Veuillez choisir un département",
+    "EMPLOYE_MATRICULE_REQUIRED": "Veuillez remplir le champ matricule",
+    "EMPLOYE_MATRICULE_USED": "Le matricule est déjà utilisé",
+    "EMPLOYE_NAME_REQUIRED": "Veuillez remplir le nom",
+    "EMPLOYE_QUALIFICATION_REQUIRED": "Veuillez choisir une qualification",
+    "LEAVING_DATES_ERROR": "La date de début doit être antérieure à la date de fin",
+    "LEAVING_DATE_OVERLAP": "Les dates choisies se chevauchent avec d'autres demandes",
+    "LEAVING_TYPE_REQUIRED": "Veuillez choisir un type de congé"
+  },
+  "leaves": {
+    "my-demands": {
+      "confirm-delete": "Voulez-vous vraiment supprimer la demande <1>{{name}}</1> ?",
+      "forms": {
+        "back": "Retour le",
+        "demand-type": "Type de demande",
+        "duration": "Durée",
+        "end": "Fin",
+        "leave": "Congé",
+        "leave-type": "Type d'absence",
+        "permission": "Permission",
+        "start": "Début"
+      },
+      "leaving": "Congés Payés",
+      "nb-days": "Nb. Jours",
+      "new": "Nouvelle Demande",
+      "start-end": "Début/Fin",
+      "status": "Status",
+      "title": "Mes Demandes",
+      "type": "Type"
+    },
+    "statuses": {
+      "C": "Annulé",
+      "N": "Nouvelle demande",
+      "R": "Refusé",
+      "V": "Validé"
+    }
+  },
+  "menus": {
+    "dashboard": "Tableau de Bord",
+    "departments": "Départements",
+    "directory": "Annuaire",
+    "employes": "Employés",
+    "leaves": "Congés",
+    "leaves-types": "Types de Congés",
+    "my-demands": "Mes demandes",
+    "qualifications": "Qualifications",
+    "settings": "Configurations"
+  },
+  "my-account": {
+    "form": {
+      "confirm-password": "Confirmez mot de passe",
+      "new-password": "Nouveau mot de passe",
+      "password": "Mot de passe actuel"
+    },
+    "snackbar": {
+      "infos-modified": "Vos informations ont bien été modifiées",
+      "password-modified": "Votre mot de passe a bien été modifié",
+      "password-not-modified": "Votre mot de passe n'a pas pu être modifié"
+    },
+    "tabs": {
+      "infos": "Informations personnelles",
+      "security": "Sécurité"
+    },
+    "title": "Mon Compte"
+  },
+  "settings": {
+    "departments": {
+      "confirm-delete": "Voulez-vous vraiment supprimer le département <1>{{name}}</1> ?",
+      "edit": "Modifier le département",
+      "messages": {
+        "success-deleted": "Le département {{name}} a été supprimé",
+        "success-modified": "Le département {{name}} a été modifié avec succès"
+      },
+      "name": "Nom du Département",
+      "new-department": "Nouveau Département",
+      "title": "Départements"
+    },
+    "leaving-types": {
+      "code": "Code",
+      "confirm-delete": "Etes-vous sur de vouloir supprimer le type <1>{{name}}</1> ?",
+      "day": "j.",
+      "edit": "Modifier le type de congé",
+      "helper-code": "Entrez un code unique (4 caractères max)",
+      "helper-name": "Nom du type de congé",
+      "impact": "Impact",
+      "messages": {
+        "LEAVINGTYPE_CODE_REQUIRED": "Veuillez entrer un code",
+        "LEAVINGTYPE_CODE_USED": "Ce code est déjà utilisé.",
+        "delete-failed": "{{name}} n'a pas pu être supprimé",
+        "success-deleted": "Le type de congé {{name}} a été supprimé",
+        "success-modified": "Le type de congé a été bien modifié"
+      },
+      "name": "Type",
+      "new-leaving-type": "Nouveau type de congé",
+      "title": "Types de congés",
+      "tooltip": {
+        "impact": "Combien de jours ce type peut impacter le congé."
+      }
+    },
+    "qualifications": {
+      "confirm-delete": "Voulez-vous vraiment supprimer la qualification <1>{{name}}</1> ?",
+      "edit": "Modifier la qualification",
+      "messages": {
+        "success-deleted": "La qualification {{name}} a été bien supprimée",
+        "success-modified": "La qualification {{name}} a été modifiée"
+      },
+      "name": "Nom de la qualification",
+      "new-qualification": "Nouvelle Qualification",
+      "title": "Qualifications"
+    }
+  }
+}

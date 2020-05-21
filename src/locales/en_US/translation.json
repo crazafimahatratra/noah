@@ -1,0 +1,189 @@
+{
+  "appbar": {
+    "logout": "Logout",
+    "my-account": "My Account"
+  },
+  "auth": {
+    "company-description": "Human Resources Management",
+    "company-name": "Chraz",
+    "errors": {
+      "general-error": "An error occured",
+      "wrong-credentials": "Wrong username or password"
+    },
+    "form": {
+      "email": "Email",
+      "password": "Password",
+      "remember-me": "Remember me",
+      "submit": "Log In"
+    },
+    "title": "Connect"
+  },
+  "common": {
+    "cancel": "Cancel",
+    "confirm-delete": "Confirmation",
+    "delete": "Delete",
+    "edit": "Edit",
+    "email": "Email",
+    "female": "Female",
+    "firstname": "Firstname",
+    "gender": "Gender",
+    "male": "Male",
+    "name": "Name",
+    "none": "None",
+    "phone": "Phone",
+    "save": "Save",
+    "search": "Search",
+    "to": "to"
+  },
+  "directory": {
+    "edit": {
+      "contracts": "Contracts",
+      "coordinates": "Coordinates",
+      "forms": {
+        "admin": "Administrator",
+        "contract-type": "Contract Type",
+        "department": "Department",
+        "qualification": "Qualification",
+        "user": "Simple User",
+        "user-type": "User Type"
+      },
+      "infos": "Infos",
+      "title-create": "New Employe",
+      "title-edit": "Edit Employe"
+    },
+    "employes": {
+      "address": "Address",
+      "birthdate": "Birthdate",
+      "cnaps": "CNAPS",
+      "confirm-delete": "Are you sure you want to delete the employe <1>{{matricule}}</1> ? <br/>This action is Irrreversible",
+      "emergency-contact": "Emergency Contact",
+      "hiring-date": "Hiring date",
+      "jobtitle": "Jobtitle",
+      "matricule": "ID Number",
+      "new-employe": "New Employe",
+      "ostie": "OSTIE",
+      "other-infos": "Other infos",
+      "reset-password": "Reset password",
+      "security": "Security",
+      "title": "Employes",
+      "tooltip": {
+        "delete": "Delete this employe",
+        "edit": "Edit the employe",
+        "security": "Set the access for this employe"
+      }
+    }
+  },
+  "errors": {
+    "EMPLOYE_CONTRACTTYPE_REQUIRED": "Contract Type required",
+    "EMPLOYE_DEPARTMENT_REQUIRED": "Department is required",
+    "EMPLOYE_MATRICULE_REQUIRED": "ID Number is required",
+    "EMPLOYE_MATRICULE_USED": "ID Number is already in use",
+    "EMPLOYE_NAME_REQUIRED": "Name is required",
+    "EMPLOYE_QUALIFICATION_REQUIRED": "Qualification required",
+    "LEAVING_DATES_ERROR": "Start date must be inferior to end date",
+    "LEAVING_DATE_OVERLAP": "Dates overlap with existing demands",
+    "LEAVING_TYPE_REQUIRED": "The type of leave is required"
+  },
+  "leaves": {
+    "my-demands": {
+      "confirm-delete": "Do you really want to delete the demand <1>{{name}}</1> ?",
+      "forms": {
+        "back": "Back on",
+        "demand-type": "Demand type",
+        "duration": "Duration",
+        "end": "End",
+        "leave": "Leave",
+        "leave-type": "Leave type",
+        "permission": "Permission",
+        "start": "Start"
+      },
+      "leaving": "Paid leave",
+      "nb-days": "Nb. Days",
+      "new": "New demand",
+      "start-end": "Start/End",
+      "status": "Status",
+      "title": "My Demands",
+      "type": "Type"
+    },
+    "statuses": {
+      "C": "Cancelled",
+      "N": "New demand",
+      "R": "Refused",
+      "V": "Validated"
+    }
+  },
+  "menus": {
+    "dashboard": "Dashboard",
+    "departments": "Departments",
+    "directory": "Directory",
+    "employes": "Employes",
+    "leaves": "Leaves",
+    "leaves-types": "Type of Leaves",
+    "my-demands": "My demands",
+    "qualifications": "Qualifications",
+    "settings": "Settings"
+  },
+  "my-account": {
+    "form": {
+      "confirm-password": "Confirm password",
+      "new-password": "New password",
+      "password": "Current password"
+    },
+    "snackbar": {
+      "infos-modified": "Your informations has been modified",
+      "password-modified": "Your password has been modified",
+      "password-not-modified": "Your password could not be updated"
+    },
+    "tabs": {
+      "infos": "My informations",
+      "security": "Security"
+    },
+    "title": "My Account"
+  },
+  "settings": {
+    "departments": {
+      "confirm-delete": "Do you really want to delete the department <1>{{name}}</1> ?",
+      "edit": "Edit the department",
+      "messages": {
+        "success-deleted": "Department {{name}} has been deleted",
+        "success-modified": "Department {{name}} has been modified"
+      },
+      "name": "Department Name",
+      "new-department": "New Department",
+      "title": "Departments"
+    },
+    "leaving-types": {
+      "code": "Code",
+      "confirm-delete": "Do you really want to delete the type <1>{{name}}</1> ?",
+      "day": "d.",
+      "edit": "Edit the leave type",
+      "helper-code": "Enter a unique code (4 characters)",
+      "helper-name": "Name of the type of leave",
+      "impact": "Impact",
+      "messages": {
+        "LEAVINGTYPE_CODE_REQUIRED": "Code is required",
+        "LEAVINGTYPE_CODE_USED": "This code is already in use.",
+        "delete-failed": "Failed to delete {{name}}",
+        "success-deleted": "The type of leave {{name}} has been deleted",
+        "success-modified": "The type of leave has been updated"
+      },
+      "name": "Type",
+      "new-leaving-type": "New type of leave",
+      "title": "Type of leaves",
+      "tooltip": {
+        "impact": "How many days this type will impact the leaving."
+      }
+    },
+    "qualifications": {
+      "confirm-delete": "Do you really want to delete the qualification <1>{{name}}</1> ?",
+      "edit": "Edit the qualification",
+      "messages": {
+        "success-deleted": "The qualification {{name}} has been deleted",
+        "success-modified": "The qualification {{name}} has been modified"
+      },
+      "name": "Qualification name",
+      "new-qualification": "New Qualification",
+      "title": "Qualifications"
+    }
+  }
+}

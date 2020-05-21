@@ -1,0 +1,10 @@
+<svg id="Logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="200" height="200" viewBox="0 0 200 200">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.5" y1="0.162" x2="0.5" y2="0.852" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="aqua"/>
+      <stop offset="1" stop-color="#0af"/>
+    </linearGradient>
+  </defs>
+  <path id="Intersection_4" data-name="Intersection 4" d="M126.136,182.668a14.569,14.569,0,0,0-6.976-4.775L10.75,145.4A144.059,144.059,0,0,1,0,106L117.163,66.556a14.83,14.83,0,0,0,6.936-5.107L171.55,0C189.157,22.374,200,52.909,200,86.571c0,50.534-24.433,94.021-59.51,113.429Z" fill="#f4f4f4"/>
+  <path id="Intersection_3" data-name="Intersection 3" d="M92.1,134.814A10.631,10.631,0,0,0,87,131.291L7.849,107.311A107.217,107.217,0,0,1,0,78.234L85.546,49.12a10.838,10.838,0,0,0,5.064-3.769L125.257,0c12.856,16.513,20.772,39.048,20.772,63.892,0,37.3-17.839,69.39-43.45,83.714Z" transform="translate(34.981 34.93)" fill="url(#linear-gradient)"/>
+</svg>
