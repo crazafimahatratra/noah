@@ -1,11 +1,10 @@
 import React from 'react';
-import { Drawer, makeStyles, IconButton, useTheme, useMediaQuery, List, ListItem, ListItemIcon, ListItemText, Collapse } from "@material-ui/core";
+import { Drawer, makeStyles, IconButton, useTheme, useMediaQuery, List, ListItem, ListItemIcon, ListItemText } from "@material-ui/core";
 import Logo from '../../Images/Logo-long.svg';
-import { ChevronLeft, Dashboard, ExpandMore, Group, Settings, CalendarToday } from '@material-ui/icons';
+import { ChevronLeft, Dashboard } from '@material-ui/icons';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 import { useHistory, useLocation } from 'react-router-dom';
-import { UserContext } from '../../AppContext';
 
 const drawerWidth = 240;
 
@@ -70,13 +69,6 @@ export default function CDrawer(props) {
     const [t,] = useTranslation();
     const history = useHistory();
     const location = useLocation();
-    const ctx = React.useContext(UserContext);
-
-    const [expanded, setExpanded] = React.useState([true, true, true]);
-    const handleExpand = (index) => () => {
-        expanded[index] = !expanded[index];
-        setExpanded([...expanded]);
-    }
 
     const handleClick = (url) => () => {
         history.push(url);
@@ -97,7 +89,7 @@ export default function CDrawer(props) {
             <List>
                 <ListItem button onClick={handleClick("/")} selected={location.pathname === "/"}>
                     <ListItemIcon className={classes.listItemIcon}><Dashboard /></ListItemIcon>
-                    <ListItemText classes={{primary: classes.listItemText}} primary={t("menus.my-diary")} />
+                    <ListItemText classes={{ primary: classes.listItemText }} primary={t("menus.my-diary")} />
                 </ListItem>
             </List>
         </Drawer>

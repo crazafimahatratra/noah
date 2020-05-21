@@ -24,7 +24,7 @@ export default function MyDiary() {
     const classes = styles();
     const commonClasses = useCommonStyles();
     const [t,] = useTranslation();
-    const [loading, setLoading] = React.useState(false);
+    const [loading,] = React.useState(false);
     const [rows, setRows] = React.useState([]);
     const [values, setValues] = React.useState({
         date: new Date(), label: "", qty: 0, pu: 0,
