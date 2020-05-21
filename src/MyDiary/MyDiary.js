@@ -26,8 +26,15 @@ export default function MyDiary() {
     const [t,] = useTranslation();
     const [loading,] = React.useState(false);
     const [rows, setRows] = React.useState([]);
+    const [products, setProducts] = React.useState([{
+        label: "Product 1", pu: 2000,
+    }, {
+        label: "Product 2", pu: 3000,
+    }, {
+        label: "Product 3", pu: 4000
+    }]);
     const [values, setValues] = React.useState({
-        date: new Date(), label: "", qty: 1, pu: 0,
+        date: new Date(), product: { label: "", pu: 0 }, qty: 1, pu: 0,
     });
 
     const handleChange = (name) => (evt) => {
@@ -39,7 +46,7 @@ export default function MyDiary() {
         setValues({ ...values, [name]: v });
     };
     const handleCancel = () => {
-        setValues({ ...values, label: "", qty: 1, pu: 0 });
+        setValues({ ...values, product: { label: "", pu: 0 }, qty: 1, pu: 0 });
     };
     const handleSubmit = (evt) => {
         evt.preventDefault();
@@ -79,7 +86,7 @@ export default function MyDiary() {
                         {rows.map((row, i) =>
                             <CTableRow key={`row-${i}`}>
                                 <TableCell>{new Intl.DateTimeFormat('fr').format(row.date)}</TableCell>
-                                <TableCell>{row.label}</TableCell>
+                                <TableCell>{row.product ? row.product.label : ""}</TableCell>
                                 <TableCell align="right">{new Intl.NumberFormat('fr').format(row.pu)}</TableCell>
                                 <TableCell align="right">{new Intl.NumberFormat('fr').format(row.qty)}</TableCell>
                                 <TableCell align="right">{new Intl.NumberFormat('fr').format(row.qty * row.pu)}</TableCell>
@@ -91,9 +98,7 @@ export default function MyDiary() {
                         <TableRow>
                             <TableCell></TableCell>
                             <TableCell>
-                                <form onSubmit={handleSubmit}>
-                                    <CTextField onChange={handleChange("label")} value={values.label} fullWidth variant="outlined" size="small" />
-                                </form>
+
                             </TableCell>
                             <TableCell>
                                 <form onSubmit={handleSubmit}>
