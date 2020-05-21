@@ -7,6 +7,8 @@ import { useHistory, Switch, Route } from 'react-router-dom';
 import { useTheme, useMediaQuery, makeStyles } from '@material-ui/core';
 import CTitle from '../Components/CTitle';
 import Scrollbars from 'react-custom-scrollbars';
+import { useTranslation } from 'react-i18next';
+import MyDiary from '../MyDiary/MyDiary';
 
 let http = new Http();
 
@@ -22,6 +24,7 @@ const styles = makeStyles(() => ({
 
 export default function Home() {
     const theme = useTheme();
+    const [t,] = useTranslation();
     const xs = useMediaQuery(theme.breakpoints.down("xs"));
     const [openDrawer, setOpenDrawer] = React.useState(true);
     const userContext = React.useContext(UserContext);
@@ -55,7 +58,7 @@ export default function Home() {
                 <main className={classes.main}>
                     <Switch>
                         <Route path="/">
-                            <CTitle>GRH</CTitle>
+                            <MyDiary/>
                         </Route>
                     </Switch>
                 </main>

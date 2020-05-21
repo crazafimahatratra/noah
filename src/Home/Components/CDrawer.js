@@ -97,53 +97,8 @@ export default function CDrawer(props) {
             <List>
                 <ListItem button onClick={handleClick("/")} selected={location.pathname === "/"}>
                     <ListItemIcon className={classes.listItemIcon}><Dashboard /></ListItemIcon>
-                    <ListItemText classes={{primary: classes.listItemText}} primary={t("menus.dashboard")} />
+                    <ListItemText classes={{primary: classes.listItemText}} primary={t("menus.my-diary")} />
                 </ListItem>
-                <ListItem button onClick={handleExpand(0)}>
-                    <ListItemIcon className={classes.listItemIcon}><Group /></ListItemIcon>
-                    <ListItemText classes={{primary: classes.listItemText}} primary={t("menus.directory")} />
-                    <ExpandMore className={clsx(classes.iconExpand, { [classes.iconExpandExpanded]: expanded[0] })} />
-                </ListItem>
-                <Collapse in={expanded[0]}>
-                    <List component="div" disablePadding className={classes.subMenu}>
-                        <ListItem button className={classes.subMenuItem} onClick={handleClick("/employes")} selected={location.pathname === "/employes"}>
-                            <ListItemText classes={{primary: classes.subMenuItemText}} primary={t("menus.employes")} />
-                        </ListItem>
-                    </List>
-                </Collapse>
-                <ListItem button onClick={handleExpand(1)}>
-                    <ListItemIcon className={classes.listItemIcon}><CalendarToday /></ListItemIcon>
-                    <ListItemText classes={{primary: classes.listItemText}} primary={t("menus.leaves")} />
-                    <ExpandMore className={clsx(classes.iconExpand, { [classes.iconExpandExpanded]: expanded[1] })} />
-                </ListItem>
-                <Collapse in={expanded[1]}>
-                    <List component="div" disablePadding className={classes.subMenu}>
-                        <ListItem button className={classes.subMenuItem} onClick={handleClick("/leavings/my-demands")} selected={location.pathname === "/leavings/my-demands"}>
-                            <ListItemText classes={{primary: classes.subMenuItemText}} primary={t("menus.my-demands")} />
-                        </ListItem>
-                    </List>
-                </Collapse>
-                {(ctx.user.userType === "A") &&
-                    <>
-                        <ListItem button onClick={handleExpand(2)}>
-                            <ListItemIcon className={classes.listItemIcon}><Settings /></ListItemIcon>
-                            <ListItemText classes={{primary: classes.listItemText}} primary={t("menus.settings")} />
-                            <ExpandMore className={clsx(classes.iconExpand, { [classes.iconExpandExpanded]: expanded[2] })} />
-                        </ListItem>
-                        <Collapse in={expanded[2]}>
-                            <List component="div" disablePadding className={classes.subMenu}>
-                                <ListItem button className={classes.subMenuItem} onClick={handleClick("/departments")} selected={location.pathname === "/departments"}>
-                                    <ListItemText classes={{primary: classes.subMenuItemText}} primary={t("menus.departments")} />
-                                </ListItem>
-                                <ListItem button className={classes.subMenuItem} onClick={handleClick("/qualifications")} selected={location.pathname === "/qualifications"}>
-                                    <ListItemText classes={{primary: classes.subMenuItemText}} primary={t("menus.qualifications")} />
-                                </ListItem>
-                                <ListItem button className={classes.subMenuItem} onClick={handleClick("/leaving-types")} selected={location.pathname === "/leaving-types"}>
-                                    <ListItemText classes={{primary: classes.subMenuItemText}} primary={t("menus.leaves-types")} />
-                                </ListItem>
-                            </List>
-                        </Collapse>
-                    </>}
             </List>
         </Drawer>
     );

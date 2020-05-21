@@ -35,44 +35,6 @@
     "search": "Rechercher",
     "to": "à"
   },
-  "directory": {
-    "edit": {
-      "contracts": "Contrats",
-      "coordinates": "Coordonnées",
-      "forms": {
-        "admin": "Administrateur",
-        "contract-type": "Type de Contrat",
-        "department": "Département",
-        "qualification": "Qualification",
-        "user": "Simple Utilisateur",
-        "user-type": "Type d'Utilisateur"
-      },
-      "infos": "Infos",
-      "title-create": "Nouvel Employé",
-      "title-edit": "Editer l'Employé"
-    },
-    "employes": {
-      "address": "Adresse",
-      "birthdate": "Date de naissance",
-      "cnaps": "CNAPS",
-      "confirm-delete": "Etes vous sur de vouloir supprimer l'employé <1>{{matricule}}</1> ? <br/>Cette action est Irreversible",
-      "emergency-contact": "Contact d'urgence",
-      "hiring-date": "Date d'embauche",
-      "jobtitle": "Poste",
-      "matricule": "Matricule",
-      "new-employe": "Nouvel Employé",
-      "ostie": "OSTIE",
-      "other-infos": "Autres infos",
-      "reset-password": "Reinitialiser le mot de passe",
-      "security": "Sécurité",
-      "title": "Employés",
-      "tooltip": {
-        "delete": "Supprimer cet employé",
-        "edit": "Editer l'employé",
-        "security": "Configurer les accès de cet employé"
-      }
-    }
-  },
   "errors": {
     "EMPLOYE_CONTRACTTYPE_REQUIRED": "Veuillez choisir un type de contrat",
     "EMPLOYE_DEPARTMENT_REQUIRED": "Veuillez choisir un département",
@@ -84,42 +46,14 @@
     "LEAVING_DATE_OVERLAP": "Les dates choisies se chevauchent avec d'autres demandes",
     "LEAVING_TYPE_REQUIRED": "Veuillez choisir un type de congé"
   },
-  "leaves": {
-    "my-demands": {
-      "confirm-delete": "Voulez-vous vraiment supprimer la demande <1>{{name}}</1> ?",
-      "forms": {
-        "back": "Retour le",
-        "demand-type": "Type de demande",
-        "duration": "Durée",
-        "end": "Fin",
-        "leave": "Congé",
-        "leave-type": "Type d'absence",
-        "permission": "Permission",
-        "start": "Début"
-      },
-      "leaving": "Congés Payés",
-      "nb-days": "Nb. Jours",
-      "new": "Nouvelle Demande",
-      "start-end": "Début/Fin",
-      "status": "Status",
-      "title": "Mes Demandes",
-      "type": "Type"
-    },
-    "statuses": {
-      "C": "Annulé",
-      "N": "Nouvelle demande",
-      "R": "Refusé",
-      "V": "Validé"
-    }
-  },
   "menus": {
-    "dashboard": "Tableau de Bord",
     "departments": "Départements",
     "directory": "Annuaire",
     "employes": "Employés",
     "leaves": "Congés",
     "leaves-types": "Types de Congés",
     "my-demands": "Mes demandes",
+    "my-diary": "Mon Journal",
     "qualifications": "Qualifications",
     "settings": "Configurations"
   },
@@ -139,6 +73,15 @@
       "security": "Sécurité"
     },
     "title": "Mon Compte"
+  },
+  "my-diary": {
+    "subtitle": "Entrées/Sorties",
+    "table": {
+      "amount": "Montant",
+      "date": "Date",
+      "label": "Libellé"
+    },
+    "title": "Mon Journal"
   },
   "settings": {
     "departments": {

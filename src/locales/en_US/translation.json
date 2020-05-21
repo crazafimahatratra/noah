@@ -35,44 +35,6 @@
     "search": "Search",
     "to": "to"
   },
-  "directory": {
-    "edit": {
-      "contracts": "Contracts",
-      "coordinates": "Coordinates",
-      "forms": {
-        "admin": "Administrator",
-        "contract-type": "Contract Type",
-        "department": "Department",
-        "qualification": "Qualification",
-        "user": "Simple User",
-        "user-type": "User Type"
-      },
-      "infos": "Infos",
-      "title-create": "New Employe",
-      "title-edit": "Edit Employe"
-    },
-    "employes": {
-      "address": "Address",
-      "birthdate": "Birthdate",
-      "cnaps": "CNAPS",
-      "confirm-delete": "Are you sure you want to delete the employe <1>{{matricule}}</1> ? <br/>This action is Irrreversible",
-      "emergency-contact": "Emergency Contact",
-      "hiring-date": "Hiring date",
-      "jobtitle": "Jobtitle",
-      "matricule": "ID Number",
-      "new-employe": "New Employe",
-      "ostie": "OSTIE",
-      "other-infos": "Other infos",
-      "reset-password": "Reset password",
-      "security": "Security",
-      "title": "Employes",
-      "tooltip": {
-        "delete": "Delete this employe",
-        "edit": "Edit the employe",
-        "security": "Set the access for this employe"
-      }
-    }
-  },
   "errors": {
     "EMPLOYE_CONTRACTTYPE_REQUIRED": "Contract Type required",
     "EMPLOYE_DEPARTMENT_REQUIRED": "Department is required",
@@ -84,42 +46,14 @@
     "LEAVING_DATE_OVERLAP": "Dates overlap with existing demands",
     "LEAVING_TYPE_REQUIRED": "The type of leave is required"
   },
-  "leaves": {
-    "my-demands": {
-      "confirm-delete": "Do you really want to delete the demand <1>{{name}}</1> ?",
-      "forms": {
-        "back": "Back on",
-        "demand-type": "Demand type",
-        "duration": "Duration",
-        "end": "End",
-        "leave": "Leave",
-        "leave-type": "Leave type",
-        "permission": "Permission",
-        "start": "Start"
-      },
-      "leaving": "Paid leave",
-      "nb-days": "Nb. Days",
-      "new": "New demand",
-      "start-end": "Start/End",
-      "status": "Status",
-      "title": "My Demands",
-      "type": "Type"
-    },
-    "statuses": {
-      "C": "Cancelled",
-      "N": "New demand",
-      "R": "Refused",
-      "V": "Validated"
-    }
-  },
   "menus": {
-    "dashboard": "Dashboard",
     "departments": "Departments",
     "directory": "Directory",
     "employes": "Employes",
     "leaves": "Leaves",
     "leaves-types": "Type of Leaves",
     "my-demands": "My demands",
+    "my-diary": "My Diary",
     "qualifications": "Qualifications",
     "settings": "Settings"
   },
@@ -139,6 +73,15 @@
       "security": "Security"
     },
     "title": "My Account"
+  },
+  "my-diary": {
+    "subtitle": "Income/Outcome",
+    "table": {
+      "amount": "Amount",
+      "date": "Date",
+      "label": "Label"
+    },
+    "title": "My Diary"
   },
   "settings": {
     "departments": {
