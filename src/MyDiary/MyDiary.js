@@ -43,6 +43,7 @@ export default function MyDiary() {
     };
     const handleSubmit = (evt) => {
         evt.preventDefault();
+        if(values.pu * values.qty === 0) return;
         rows.push(values);
         setRows([...rows]);
         handleCancel();
