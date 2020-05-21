@@ -27,7 +27,7 @@ export default function MyDiary() {
     const [loading,] = React.useState(false);
     const [rows, setRows] = React.useState([]);
     const [values, setValues] = React.useState({
-        date: new Date(), label: "", qty: 0, pu: 0,
+        date: new Date(), label: "", qty: 1, pu: 0,
     });
 
     const handleChange = (name) => (evt) => {
@@ -39,7 +39,7 @@ export default function MyDiary() {
         setValues({ ...values, [name]: v });
     };
     const handleCancel = () => {
-        setValues({ ...values, label: "", qty: 0, pu: 0 });
+        setValues({ ...values, label: "", qty: 1, pu: 0 });
     };
     const handleSubmit = (evt) => {
         evt.preventDefault();
@@ -69,9 +69,9 @@ export default function MyDiary() {
                             <CTableCellHeader style={{ width: 50 }}>#</CTableCellHeader>
                             <CTableCellHeader>{t("my-diary.table.date")}</CTableCellHeader>
                             <CTableCellHeader>{t("my-diary.table.label")}</CTableCellHeader>
-                            <CTableCellHeader>{t("my-diary.table.pu")}</CTableCellHeader>
-                            <CTableCellHeader>{t("my-diary.table.qte")}</CTableCellHeader>
-                            <CTableCellHeader>{t("my-diary.table.amount")}</CTableCellHeader>
+                            <CTableCellHeader align="right">{t("my-diary.table.pu")}</CTableCellHeader>
+                            <CTableCellHeader align="right">{t("my-diary.table.qte")}</CTableCellHeader>
+                            <CTableCellHeader align="right">{t("my-diary.table.amount")}</CTableCellHeader>
                             <CTableCellHeader></CTableCellHeader>
                         </TableRow>
                     </TableHead>
