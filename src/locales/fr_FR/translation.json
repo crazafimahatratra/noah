@@ -79,7 +79,9 @@
     "table": {
       "amount": "Montant",
       "date": "Date",
-      "label": "Libellé"
+      "label": "Libellé",
+      "pu": "PU",
+      "qte": "Qté"
     },
     "title": "Mon Journal"
   },

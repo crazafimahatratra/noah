@@ -79,7 +79,9 @@
     "table": {
       "amount": "Amount",
       "date": "Date",
-      "label": "Label"
+      "label": "Label",
+      "pu": "PU",
+      "qte": "Qty"
     },
     "title": "My Diary"
   },

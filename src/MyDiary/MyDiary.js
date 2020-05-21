@@ -27,19 +27,19 @@ export default function MyDiary() {
     const [loading, setLoading] = React.useState(false);
     const [rows, setRows] = React.useState([]);
     const [values, setValues] = React.useState({
-        date: new Date(), label: "", amount: 0,
+        date: new Date(), label: "", qty: 0, pu: 0,
     });
 
     const handleChange = (name) => (evt) => {
         let v = evt.target.value;
-        if (name === "amount") {
+        if (name === "pu" || name === "qty") {
             v = parseInt(v, 10);
-            if(isNaN(v)) v = 0;
+            if (isNaN(v)) v = 0;
         }
         setValues({ ...values, [name]: v });
     };
     const handleCancel = () => {
-        setValues({ ...values, label: "", amount: 0 });
+        setValues({ ...values, label: "", qty: 0, pu: 0 });
     };
     const handleSubmit = (evt) => {
         evt.preventDefault();
@@ -48,7 +48,7 @@ export default function MyDiary() {
         handleCancel();
     };
 
-    const sum = rows.reduce((a, b) => { return { amount: a.amount + b.amount } }, { amount: 0 });
+    const sum = rows.reduce((a, b) => { return { amount: a.amount + b.qty * b.pu } }, { amount: 0 });
     return (
         <>
             <div className={classes.toolbar}>
@@ -57,9 +57,9 @@ export default function MyDiary() {
                 <h1 className={classes.total}>{new Intl.NumberFormat('fr').format(sum.amount)} Fmg.</h1>
                 <div style={{ flexGrow: 1 }}></div>
                 <ButtonGroup>
-                    <CButton variant="outlined" style={{ paddingRight: 2, paddingLeft: 2 }}><KeyboardArrowLeft/></CButton>
+                    <CButton variant="outlined" style={{ paddingRight: 2, paddingLeft: 2 }}><KeyboardArrowLeft /></CButton>
                     <CButton variant="outlined" color="primary">01/01/2020</CButton>
-                    <CButton variant="outlined" style={{ paddingRight: 2, paddingLeft: 2 }}><KeyboardArrowRight/></CButton>
+                    <CButton variant="outlined" style={{ paddingRight: 2, paddingLeft: 2 }}><KeyboardArrowRight /></CButton>
                 </ButtonGroup>
             </div>
             {!loading &&
@@ -69,6 +69,8 @@ export default function MyDiary() {
                             <CTableCellHeader style={{ width: 50 }}>#</CTableCellHeader>
                             <CTableCellHeader>{t("my-diary.table.date")}</CTableCellHeader>
                             <CTableCellHeader>{t("my-diary.table.label")}</CTableCellHeader>
+                            <CTableCellHeader>{t("my-diary.table.pu")}</CTableCellHeader>
+                            <CTableCellHeader>{t("my-diary.table.qte")}</CTableCellHeader>
                             <CTableCellHeader>{t("my-diary.table.amount")}</CTableCellHeader>
                             <CTableCellHeader></CTableCellHeader>
                         </TableRow>
@@ -79,7 +81,9 @@ export default function MyDiary() {
                                 <TableCell></TableCell>
                                 <TableCell>{new Intl.DateTimeFormat('fr').format(row.date)}</TableCell>
                                 <TableCell>{row.label}</TableCell>
-                                <TableCell align="right">{new Intl.NumberFormat('fr').format(row.amount)}</TableCell>
+                                <TableCell align="right">{new Intl.NumberFormat('fr').format(row.pu)}</TableCell>
+                                <TableCell align="right">{new Intl.NumberFormat('fr').format(row.qty)}</TableCell>
+                                <TableCell align="right">{new Intl.NumberFormat('fr').format(row.qty * row.pu)}</TableCell>
                                 <TableCell>
                                     <IconButton title={t('common.delete')} size="small" className="hoverIcon"><Cancel className={commonClasses.danger} /></IconButton>
                                 </TableCell>
@@ -98,12 +102,19 @@ export default function MyDiary() {
                             </TableCell>
                             <TableCell>
                                 <form onSubmit={handleSubmit}>
-                                    <CTextField onChange={handleChange("amount")} value={values.amount} fullWidth variant="outlined" size="small" type="number" />
+                                    <CTextField onChange={handleChange("pu")} value={values.pu} fullWidth variant="outlined" size="small" type="number" />
                                 </form>
                             </TableCell>
                             <TableCell>
+                                <form onSubmit={handleSubmit}>
+                                    <CTextField onChange={handleChange("qty")} value={values.qty} fullWidth variant="outlined" size="small" type="number" />
+                                </form>
+                            </TableCell>
+                            <TableCell align="right">
+                                {new Intl.NumberFormat('fr').format(values.qty * values.pu)}
+                            </TableCell>
+                            <TableCell>
                                 <IconButton onClick={handleSubmit} size="small" color="primary"><Check /></IconButton>
-                                <IconButton onClick={handleCancel} size="small"><Cancel /></IconButton>
                             </TableCell>
                         </TableRow>
                     </TableFooter>
