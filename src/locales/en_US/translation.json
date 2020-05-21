@@ -4,14 +4,14 @@
     "my-account": "My Account"
   },
   "auth": {
-    "company-description": "Human Resources Management",
+    "company-description": "Expense Tracker",
     "company-name": "Chraz",
     "errors": {
       "general-error": "An error occured",
       "wrong-credentials": "Wrong username or password"
     },
     "form": {
-      "email": "Email",
+      "email": "Login",
       "password": "Password",
       "remember-me": "Remember me",
       "submit": "Log In"

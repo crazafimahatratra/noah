@@ -19,7 +19,7 @@ const styles = makeStyles((theme) => ({
     bg: {
         [theme.breakpoints.up("md")]: {
             height: "100vh",
-            background: `linear-gradient(to bottom, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
+            background: `linear-gradient(to bottom, ${theme.palette.grey[300]}, ${theme.palette.grey[500]})`,
             display: "flex",
             alignItems: "center",
             justifyItems: "center",
