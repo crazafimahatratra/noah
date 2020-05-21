@@ -30,7 +30,7 @@ const styles = makeStyles((theme) => ({
         ...theme.mixins.toolbar,
         justifyContent: 'space-between',
         "& img": {
-            maxWidth: 150,
+            maxWidth: 170,
         }
     },
     listItemIcon: {

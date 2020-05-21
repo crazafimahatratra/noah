@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import CTitle from '../Components/CTitle';
-import { Table, TableHead, TableRow, TableBody, TableFooter, TableCell, IconButton, makeStyles, ButtonGroup } from '@material-ui/core';
+import { Table, TableHead, TableRow, TableBody, TableCell, IconButton, makeStyles, ButtonGroup } from '@material-ui/core';
 import { CTableCellHeader, CTableRow } from '../Components/CTable';
 import { Check, Cancel, KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons';
 import CTextField from '../Components/CTextField';
@@ -43,7 +43,7 @@ export default function MyDiary() {
     };
     const handleSubmit = (evt) => {
         evt.preventDefault();
-        if(values.pu * values.qty === 0) return;
+        if (values.pu * values.qty === 0) return;
         rows.push(values);
         setRows([...rows]);
         handleCancel();
@@ -67,19 +67,17 @@ export default function MyDiary() {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <CTableCellHeader style={{ width: 50 }}>#</CTableCellHeader>
-                            <CTableCellHeader>{t("my-diary.table.date")}</CTableCellHeader>
+                            <CTableCellHeader style={{ width: 100 }}>{t("my-diary.table.date")}</CTableCellHeader>
                             <CTableCellHeader>{t("my-diary.table.label")}</CTableCellHeader>
-                            <CTableCellHeader align="right">{t("my-diary.table.pu")}</CTableCellHeader>
-                            <CTableCellHeader align="right">{t("my-diary.table.qte")}</CTableCellHeader>
-                            <CTableCellHeader align="right">{t("my-diary.table.amount")}</CTableCellHeader>
+                            <CTableCellHeader align="right" style={{ width: 150 }}>{t("my-diary.table.pu")}</CTableCellHeader>
+                            <CTableCellHeader align="right" style={{ width: 150 }}>{t("my-diary.table.qte")}</CTableCellHeader>
+                            <CTableCellHeader align="right" style={{ width: 150 }}>{t("my-diary.table.amount")}</CTableCellHeader>
                             <CTableCellHeader></CTableCellHeader>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {rows.map((row, i) =>
                             <CTableRow key={`row-${i}`}>
-                                <TableCell></TableCell>
                                 <TableCell>{new Intl.DateTimeFormat('fr').format(row.date)}</TableCell>
                                 <TableCell>{row.label}</TableCell>
                                 <TableCell align="right">{new Intl.NumberFormat('fr').format(row.pu)}</TableCell>
@@ -90,12 +88,8 @@ export default function MyDiary() {
                                 </TableCell>
                             </CTableRow>
                         )}
-                    </TableBody>
-                    <TableFooter>
                         <TableRow>
                             <TableCell></TableCell>
-                            <TableCell>
-                            </TableCell>
                             <TableCell>
                                 <form onSubmit={handleSubmit}>
                                     <CTextField onChange={handleChange("label")} value={values.label} fullWidth variant="outlined" size="small" />
@@ -118,7 +112,7 @@ export default function MyDiary() {
                                 <IconButton onClick={handleSubmit} size="small" color="primary"><Check /></IconButton>
                             </TableCell>
                         </TableRow>
-                    </TableFooter>
+                    </TableBody>
                 </Table>}
         </>
     );
