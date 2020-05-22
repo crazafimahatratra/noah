@@ -50,19 +50,24 @@ export default function MyDiary() {
         if (values.pu * values.qty === 0) return;
         rows.push(values);
         setRows([...rows]);
+        if (values.product.pu === 0) {
+            values.product.pu = values.pu;
+        }
         handleCancel();
     };
     const handleSelect = (_evt, value) => {
         if (!value) return;
         if (value.inputValue) {
-            setValues({ ...values, product: { ...value, label: value.inputValue } });
-            products.push({ label: value.inputValue, pu: value.pu });
+            let newproduct = { pu: value.pu, label: value.inputValue };
+            setValues({ ...values, product: newproduct });
+            products.push(newproduct);
             setProducts([...products]);
             return;
         }
         if (typeof value === "string") {
-            setValues({ ...values, product: { ...value, label: value } });
-            products.push({ label: value, pu: 0 });
+            let newproduct = { pu: 0, label: value };
+            setValues({ ...values, product: newproduct });
+            products.push(newproduct);
             setProducts([...products]);
             return;
         }
