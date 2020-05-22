@@ -11,7 +11,7 @@ import CButton from '../Components/CButton';
 import Http from '../Utils/Http';
 import Loader from '../Components/Loader';
 import CDialog from '../Components/CDialog';
-import {DateRangePicker, Calendar} from 'react-date-range';
+import { DateRangePicker, Calendar } from 'react-date-range';
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 import format from 'date-fns/format';
@@ -152,13 +152,13 @@ export default function MyDiary() {
         }
     };
 
-    const sum = rows.reduce((a, b) => { return { amount: a.amount + b.qty * b.pu } }, { amount: 0 });
     const filterDate = (row) => {
         let d1 = format(ranges.startDate, 'yyyyMMdd');
         let d2 = format(new Date(row.date), 'yyyyMMdd');
         let d3 = format(ranges.endDate, 'yyyyMMdd');
         return d1 <= d2 && d2 <= d3;
     }
+    const sum = rows.filter(filterDate).reduce((a, b) => { return { amount: a.amount + b.qty * b.pu } }, { amount: 0 });
 
     const [anchorDate, setAnchorDate] = React.useState(null);
     return (
@@ -171,13 +171,13 @@ export default function MyDiary() {
                 <h1 className={classes.total}>{new Intl.NumberFormat('fr').format(sum.amount)} Fmg.</h1>
             </div>
 
-            <Popover PaperProps={{style: {height: 400}}} anchorOrigin={{horizontal: "left", vertical: "bottom"}} anchorEl={anchorCalendar} open={Boolean(anchorCalendar)} onClose={() => setAnchorCalendar(null)}>
-                <DateRangePicker ranges={[ranges]} onChange={handleRangeChanged}/>
+            <Popover PaperProps={{ style: { height: 400 } }} anchorOrigin={{ horizontal: "left", vertical: "bottom" }} anchorEl={anchorCalendar} open={Boolean(anchorCalendar)} onClose={() => setAnchorCalendar(null)}>
+                <DateRangePicker ranges={[ranges]} onChange={handleRangeChanged} />
             </Popover>
-            <Popover PaperProps={{style: {height: 400}}} anchorOrigin={{horizontal: "left", vertical: "bottom"}} anchorEl={anchorDate} open={Boolean(anchorDate)} onClose={() => setAnchorDate(null)}>
-                <Calendar date={values.date} onChange={item => {setValues({...values, date: item})}}/>
+            <Popover PaperProps={{ style: { height: 400 } }} anchorOrigin={{ horizontal: "left", vertical: "bottom" }} anchorEl={anchorDate} open={Boolean(anchorDate)} onClose={() => setAnchorDate(null)}>
+                <Calendar date={values.date} onChange={item => { setValues({ ...values, date: item }) }} />
             </Popover>
-            
+
 
             {loading && <Loader />}
             {!loading &&
