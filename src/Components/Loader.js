@@ -1,5 +1,5 @@
 import React from 'react';
-import Spinner from '../Icons/Spinner';
+import Spinner from './Spinner';
 import { makeStyles } from '@material-ui/core';
 
 const styles = makeStyles(() => ({

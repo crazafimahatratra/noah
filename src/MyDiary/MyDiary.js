@@ -9,6 +9,7 @@ import CTextField from '../Components/CTextField';
 import useCommonStyles from '../Theme';
 import CButton from '../Components/CButton';
 import Http from '../Utils/Http';
+import Loader from '../Components/Loader';
 let http = new Http();
 
 const styles = makeStyles((theme) => ({
@@ -27,19 +28,22 @@ export default function MyDiary() {
     const classes = styles();
     const commonClasses = useCommonStyles();
     const [t,] = useTranslation();
-    const [loading,] = React.useState(false);
+    const [loading, setLoading] = React.useState(false);
     const [rows, setRows] = React.useState([]);
     const filter = createFilterOptions();
 
     const [products, setProducts] = React.useState([]);
     React.useEffect(() => {
+        setLoading(true);
         let r1 = http.get('products');
         let r2 = http.get('operations');
         Promise.all([r1, r2])
         .then(([response1, response2]) => {
             setProducts(response1.data);
             setRows(response2.data);
-        }).catch(console.error);
+        })
+        .catch(console.error)
+        .finally(() => setLoading(false));
     }, []);
     const [values, setValues] = React.useState({
         date: new Date(), product: { label: "", pu: 0 }, qty: 1, pu: 0,
@@ -102,6 +106,21 @@ export default function MyDiary() {
         setValues({ ...values, product: value, pu: value.pu });
     }
 
+    const handleDelete = (row) => () => {
+        setLoading(true);
+        http.delete(`operations/${row.id}`)
+        .then(() => {
+            let index = rows.findIndex(r => r.id === row.id);
+            if(index >= 0) {
+                rows.splice(index, 1);
+                setRows([...rows]);
+            }
+        })
+        .finally(() => {
+            setLoading(false);
+        })
+    }
+
     const sum = rows.reduce((a, b) => { return { amount: a.amount + b.qty * b.pu } }, { amount: 0 });
     return (
         <>
@@ -116,6 +135,7 @@ export default function MyDiary() {
                     <CButton variant="outlined" style={{ paddingRight: 2, paddingLeft: 2 }}><KeyboardArrowRight /></CButton>
                 </ButtonGroup>
             </div>
+            {loading && <Loader/>}
             {!loading &&
                 <Table>
                     <TableHead>
@@ -137,7 +157,7 @@ export default function MyDiary() {
                                 <TableCell align="right">{new Intl.NumberFormat('fr').format(row.qty)}</TableCell>
                                 <TableCell align="right">{new Intl.NumberFormat('fr').format(row.qty * row.pu)}</TableCell>
                                 <TableCell>
-                                    <IconButton title={t('common.delete')} size="small" className="hoverIcon"><Cancel className={commonClasses.danger} /></IconButton>
+                                    <IconButton onClick={handleDelete(row)} title={t('common.delete')} size="small" className="hoverIcon"><Cancel className={commonClasses.danger} /></IconButton>
                                 </TableCell>
                             </CTableRow>
                         )}
