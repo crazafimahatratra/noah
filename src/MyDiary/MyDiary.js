@@ -8,6 +8,8 @@ import { Check, Cancel, KeyboardArrowLeft, KeyboardArrowRight } from '@material-
 import CTextField from '../Components/CTextField';
 import useCommonStyles from '../Theme';
 import CButton from '../Components/CButton';
+import Http from '../Utils/Http';
+let http = new Http();
 
 const styles = makeStyles((theme) => ({
     toolbar: {
@@ -30,6 +32,12 @@ export default function MyDiary() {
     const filter = createFilterOptions();
 
     const [products, setProducts] = React.useState([]);
+    React.useEffect(() => {
+        http.get('products')
+            .then(response => {
+                setProducts(response.data);
+            });
+    }, []);
     const [values, setValues] = React.useState({
         date: new Date(), product: { label: "", pu: 0 }, qty: 1, pu: 0,
     });
@@ -50,25 +58,28 @@ export default function MyDiary() {
         if (values.pu * values.qty === 0) return;
         rows.push(values);
         setRows([...rows]);
-        if (values.product.pu === 0) {
+        if (!values.product.id) {
             values.product.pu = values.pu;
+            http.post('products', values.product).catch(console.error);
         }
         handleCancel();
     };
+
+    const createProduct = (label, pu) => {
+        let p = { label: label, pu: pu, unit: "" };
+        products.push(p);
+        setProducts([...products]);
+        setValues({ ...values, product: p });
+    };
+
     const handleSelect = (_evt, value) => {
         if (!value) return;
         if (value.inputValue) {
-            let newproduct = { pu: value.pu, label: value.inputValue };
-            setValues({ ...values, product: newproduct });
-            products.push(newproduct);
-            setProducts([...products]);
+            createProduct(value.inputValue, value.pu);
             return;
         }
         if (typeof value === "string") {
-            let newproduct = { pu: 0, label: value };
-            setValues({ ...values, product: newproduct });
-            products.push(newproduct);
-            setProducts([...products]);
+            createProduct(value, 0);
             return;
         }
         setValues({ ...values, product: value, pu: value.pu });
