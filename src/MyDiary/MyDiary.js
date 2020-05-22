@@ -33,10 +33,13 @@ export default function MyDiary() {
 
     const [products, setProducts] = React.useState([]);
     React.useEffect(() => {
-        http.get('products')
-            .then(response => {
-                setProducts(response.data);
-            });
+        let r1 = http.get('products');
+        let r2 = http.get('operations');
+        Promise.all([r1, r2])
+        .then(([response1, response2]) => {
+            setProducts(response1.data);
+            setRows(response2.data);
+        }).catch(console.error);
     }, []);
     const [values, setValues] = React.useState({
         date: new Date(), product: { label: "", pu: 0 }, qty: 1, pu: 0,
@@ -53,14 +56,28 @@ export default function MyDiary() {
     const handleCancel = () => {
         setValues({ ...values, product: { label: "", pu: 0 }, qty: 1, pu: 0 });
     };
+
+    const createOperation = (productId, pu, qty) => {
+        http.post('operations', {date: new Date(), productId: productId, pu: pu, qty: qty})
+        .then(response => {
+            rows.push(response.data);
+            setRows([...rows]);
+        })
+        .catch(console.error);
+    }
+
     const handleSubmit = (evt) => {
         evt.preventDefault();
         if (values.pu * values.qty === 0) return;
-        rows.push(values);
-        setRows([...rows]);
         if (!values.product.id) {
             values.product.pu = values.pu;
-            http.post('products', values.product).catch(console.error);
+            http.post('products', values.product)
+            .then(response => {
+                createOperation(response.data.id, values.pu, values.qty);
+            })
+            .catch(console.error);
+        } else {
+            createOperation(values.product.id, values.pu, values.qty);
         }
         handleCancel();
     };
@@ -114,7 +131,7 @@ export default function MyDiary() {
                     <TableBody>
                         {rows.map((row, i) =>
                             <CTableRow key={`row-${i}`}>
-                                <TableCell>{new Intl.DateTimeFormat('fr').format(row.date)}</TableCell>
+                                <TableCell>{new Intl.DateTimeFormat('fr').format(new Date(row.date))}</TableCell>
                                 <TableCell>{row.product ? row.product.label : ""}</TableCell>
                                 <TableCell align="right">{new Intl.NumberFormat('fr').format(row.pu)}</TableCell>
                                 <TableCell align="right">{new Intl.NumberFormat('fr').format(row.qty)}</TableCell>
