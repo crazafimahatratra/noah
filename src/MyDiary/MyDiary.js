@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import CTitle from '../Components/CTitle';
 import { Table, TableHead, TableRow, TableBody, TableCell, IconButton, makeStyles, ButtonGroup } from '@material-ui/core';
+import { Autocomplete, createFilterOptions } from '@material-ui/lab'
 import { CTableCellHeader, CTableRow } from '../Components/CTable';
 import { Check, Cancel, KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons';
 import CTextField from '../Components/CTextField';
@@ -26,8 +27,11 @@ export default function MyDiary() {
     const [t,] = useTranslation();
     const [loading,] = React.useState(false);
     const [rows, setRows] = React.useState([]);
+    const filter = createFilterOptions();
+
+    const [products, setProducts] = React.useState([]);
     const [values, setValues] = React.useState({
-        date: new Date(), label: "", qty: 1, pu: 0,
+        date: new Date(), product: { label: "", pu: 0 }, qty: 1, pu: 0,
     });
 
     const handleChange = (name) => (evt) => {
@@ -39,15 +43,36 @@ export default function MyDiary() {
         setValues({ ...values, [name]: v });
     };
     const handleCancel = () => {
-        setValues({ ...values, label: "", qty: 1, pu: 0 });
+        setValues({ ...values, product: { label: "", pu: 0 }, qty: 1, pu: 0 });
     };
     const handleSubmit = (evt) => {
         evt.preventDefault();
         if (values.pu * values.qty === 0) return;
         rows.push(values);
         setRows([...rows]);
+        if (values.product.pu === 0) {
+            values.product.pu = values.pu;
+        }
         handleCancel();
     };
+    const handleSelect = (_evt, value) => {
+        if (!value) return;
+        if (value.inputValue) {
+            let newproduct = { pu: value.pu, label: value.inputValue };
+            setValues({ ...values, product: newproduct });
+            products.push(newproduct);
+            setProducts([...products]);
+            return;
+        }
+        if (typeof value === "string") {
+            let newproduct = { pu: 0, label: value };
+            setValues({ ...values, product: newproduct });
+            products.push(newproduct);
+            setProducts([...products]);
+            return;
+        }
+        setValues({ ...values, product: value, pu: value.pu });
+    }
 
     const sum = rows.reduce((a, b) => { return { amount: a.amount + b.qty * b.pu } }, { amount: 0 });
     return (
@@ -79,7 +104,7 @@ export default function MyDiary() {
                         {rows.map((row, i) =>
                             <CTableRow key={`row-${i}`}>
                                 <TableCell>{new Intl.DateTimeFormat('fr').format(row.date)}</TableCell>
-                                <TableCell>{row.label}</TableCell>
+                                <TableCell>{row.product ? row.product.label : ""}</TableCell>
                                 <TableCell align="right">{new Intl.NumberFormat('fr').format(row.pu)}</TableCell>
                                 <TableCell align="right">{new Intl.NumberFormat('fr').format(row.qty)}</TableCell>
                                 <TableCell align="right">{new Intl.NumberFormat('fr').format(row.qty * row.pu)}</TableCell>
@@ -91,9 +116,28 @@ export default function MyDiary() {
                         <TableRow>
                             <TableCell></TableCell>
                             <TableCell>
-                                <form onSubmit={handleSubmit}>
-                                    <CTextField onChange={handleChange("label")} value={values.label} fullWidth variant="outlined" size="small" />
-                                </form>
+                                <Autocomplete options={products} clearOnBlur freeSolo
+                                    value={values.product}
+                                    getOptionLabel={(option) => {
+                                        if (typeof option === "string") return option;
+                                        return option.label;
+                                    }}
+                                    renderInput={(params) => <CTextField {...params} variant="outlined" size="small" fullWidth />}
+                                    onChange={handleSelect}
+                                    filterOptions={(options, params) => {
+                                        const filtered = filter(options, params);
+                                        // Suggest the creation of a new value
+                                        if (params.inputValue !== '') {
+                                            filtered.push({
+                                                inputValue: params.inputValue,
+                                                label: `Add "${params.inputValue}"`,
+                                                pu: 0
+                                            });
+                                        }
+
+                                        return filtered;
+                                    }}
+                                />
                             </TableCell>
                             <TableCell>
                                 <form onSubmit={handleSubmit}>
