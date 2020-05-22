@@ -47,15 +47,8 @@
     "LEAVING_TYPE_REQUIRED": "Veuillez choisir un type de congé"
   },
   "menus": {
-    "departments": "Départements",
-    "directory": "Annuaire",
-    "employes": "Employés",
-    "leaves": "Congés",
-    "leaves-types": "Types de Congés",
-    "my-demands": "Mes demandes",
     "my-diary": "Mon Journal",
-    "qualifications": "Qualifications",
-    "settings": "Configurations"
+    "my-products": "Mes Produits"
   },
   "my-account": {
     "form": {
@@ -85,6 +78,14 @@
       "qte": "Qté"
     },
     "title": "Mon Journal"
+  },
+  "my-products": {
+    "subtitle": "Liste de mes produits",
+    "table": {
+      "label": "Libellé",
+      "pu": "PU"
+    },
+    "title": "Mes Produits"
   },
   "settings": {
     "departments": {

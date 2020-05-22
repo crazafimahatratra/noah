@@ -47,15 +47,8 @@
     "LEAVING_TYPE_REQUIRED": "The type of leave is required"
   },
   "menus": {
-    "departments": "Departments",
-    "directory": "Directory",
-    "employes": "Employes",
-    "leaves": "Leaves",
-    "leaves-types": "Type of Leaves",
-    "my-demands": "My demands",
     "my-diary": "My Diary",
-    "qualifications": "Qualifications",
-    "settings": "Settings"
+    "my-products": "My Products"
   },
   "my-account": {
     "form": {
@@ -85,6 +78,14 @@
       "qte": "Qty"
     },
     "title": "My Diary"
+  },
+  "my-products": {
+    "subtitle": "List of my products",
+    "table": {
+      "label": "Label",
+      "pu": "PU"
+    },
+    "title": "My Products"
   },
   "settings": {
     "departments": {
