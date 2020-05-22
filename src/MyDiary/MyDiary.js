@@ -60,9 +60,14 @@ export default function MyDiary() {
             setProducts([...products]);
             return;
         }
+        if (typeof value === "string") {
+            setValues({ ...values, product: { ...value, label: value } });
+            products.push({ label: value, pu: 0 });
+            setProducts([...products]);
+            return;
+        }
         setValues({ ...values, product: value, pu: value.pu });
     }
-    console.log(products);
 
     const sum = rows.reduce((a, b) => { return { amount: a.amount + b.qty * b.pu } }, { amount: 0 });
     return (
