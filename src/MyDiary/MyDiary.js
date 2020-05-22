@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import CTitle from '../Components/CTitle';
 import { Table, TableHead, TableRow, TableBody, TableCell, IconButton, makeStyles, ButtonGroup } from '@material-ui/core';
+import { Autocomplete, createFilterOptions } from '@material-ui/lab'
 import { CTableCellHeader, CTableRow } from '../Components/CTable';
 import { Check, Cancel, KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons';
 import CTextField from '../Components/CTextField';
@@ -26,13 +27,9 @@ export default function MyDiary() {
     const [t,] = useTranslation();
     const [loading,] = React.useState(false);
     const [rows, setRows] = React.useState([]);
-    const [products, setProducts] = React.useState([{
-        label: "Product 1", pu: 2000,
-    }, {
-        label: "Product 2", pu: 3000,
-    }, {
-        label: "Product 3", pu: 4000
-    }]);
+    const filter = createFilterOptions();
+
+    const [products, setProducts] = React.useState([]);
     const [values, setValues] = React.useState({
         date: new Date(), product: { label: "", pu: 0 }, qty: 1, pu: 0,
     });
@@ -55,6 +52,17 @@ export default function MyDiary() {
         setRows([...rows]);
         handleCancel();
     };
+    const handleSelect = (_evt, value) => {
+        if (!value) return;
+        if (value.inputValue) {
+            setValues({ ...values, product: { ...value, label: value.inputValue } });
+            products.push({ label: value.inputValue, pu: value.pu });
+            setProducts([...products]);
+            return;
+        }
+        setValues({ ...values, product: value, pu: value.pu });
+    }
+    console.log(products);
 
     const sum = rows.reduce((a, b) => { return { amount: a.amount + b.qty * b.pu } }, { amount: 0 });
     return (
@@ -98,7 +106,28 @@ export default function MyDiary() {
                         <TableRow>
                             <TableCell></TableCell>
                             <TableCell>
+                                <Autocomplete options={products} clearOnBlur freeSolo
+                                    value={values.product}
+                                    getOptionLabel={(option) => {
+                                        if (typeof option === "string") return option;
+                                        return option.label;
+                                    }}
+                                    renderInput={(params) => <CTextField {...params} variant="outlined" size="small" fullWidth />}
+                                    onChange={handleSelect}
+                                    filterOptions={(options, params) => {
+                                        const filtered = filter(options, params);
+                                        // Suggest the creation of a new value
+                                        if (params.inputValue !== '') {
+                                            filtered.push({
+                                                inputValue: params.inputValue,
+                                                label: `Add "${params.inputValue}"`,
+                                                pu: 0
+                                            });
+                                        }
 
+                                        return filtered;
+                                    }}
+                                />
                             </TableCell>
                             <TableCell>
                                 <form onSubmit={handleSubmit}>
