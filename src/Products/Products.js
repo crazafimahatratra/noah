@@ -96,7 +96,7 @@ export default function Products() {
                                     <IconButton onClick={handleDelete(row)} title={t('common.delete')} size="small" className="hoverIcon"><Cancel className={commonClasses.danger} /></IconButton>
                                 </TableCell>
                                 <TableCell align="right">{new Intl.NumberFormat('fr').format(row.pu)}</TableCell>
-                                <TableCell align="right">{row.unit}</TableCell>
+                                <TableCell>{row.unit}</TableCell>
                             </CTableRow>
                         )}
                     </TableBody>

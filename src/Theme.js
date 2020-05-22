@@ -10,7 +10,7 @@ export const theme = createMuiTheme({
             main: "#f44336",
         },
         secondary: {
-            main: "#ec407a",
+            main: "#00bcd4",
         },
         text: {
             primary: "#202020",
@@ -26,7 +26,7 @@ export const theme = createMuiTheme({
 
 const commonStyles = makeStyles((theme) => ({
     tdPrimary: {
-        color: theme.palette.primary.dark,
+        color: theme.palette.secondary.dark,
         cursor: "pointer",
         fontWeight: 700,
     },
