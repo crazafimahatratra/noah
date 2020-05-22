@@ -75,6 +75,7 @@
     "title": "Mon Compte"
   },
   "my-diary": {
+    "confirm-delete": "Etes-vous vraiment sûr de vouloir supprimer cette ligne ?",
     "subtitle": "Entrées/Sorties",
     "table": {
       "amount": "Montant",

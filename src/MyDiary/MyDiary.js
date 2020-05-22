@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import CTitle from '../Components/CTitle';
 import { Table, TableHead, TableRow, TableBody, TableCell, IconButton, makeStyles, ButtonGroup } from '@material-ui/core';
-import { Autocomplete, createFilterOptions } from '@material-ui/lab'
+import { Autocomplete, createFilterOptions, Alert } from '@material-ui/lab'
 import { CTableCellHeader, CTableRow } from '../Components/CTable';
 import { Check, Cancel, KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons';
 import CTextField from '../Components/CTextField';
@@ -10,6 +10,7 @@ import useCommonStyles from '../Theme';
 import CButton from '../Components/CButton';
 import Http from '../Utils/Http';
 import Loader from '../Components/Loader';
+import CDialog from '../Components/CDialog';
 let http = new Http();
 
 const styles = makeStyles((theme) => ({
@@ -38,12 +39,12 @@ export default function MyDiary() {
         let r1 = http.get('products');
         let r2 = http.get('operations');
         Promise.all([r1, r2])
-        .then(([response1, response2]) => {
-            setProducts(response1.data);
-            setRows(response2.data);
-        })
-        .catch(console.error)
-        .finally(() => setLoading(false));
+            .then(([response1, response2]) => {
+                setProducts(response1.data);
+                setRows(response2.data);
+            })
+            .catch(console.error)
+            .finally(() => setLoading(false));
     }, []);
     const [values, setValues] = React.useState({
         date: new Date(), product: { label: "", pu: 0 }, qty: 1, pu: 0,
@@ -62,12 +63,12 @@ export default function MyDiary() {
     };
 
     const createOperation = (productId, pu, qty) => {
-        http.post('operations', {date: new Date(), productId: productId, pu: pu, qty: qty})
-        .then(response => {
-            rows.push(response.data);
-            setRows([...rows]);
-        })
-        .catch(console.error);
+        http.post('operations', { date: new Date(), productId: productId, pu: pu, qty: qty })
+            .then(response => {
+                rows.push(response.data);
+                setRows([...rows]);
+            })
+            .catch(console.error);
     }
 
     const handleSubmit = (evt) => {
@@ -76,10 +77,10 @@ export default function MyDiary() {
         if (!values.product.id) {
             values.product.pu = values.pu;
             http.post('products', values.product)
-            .then(response => {
-                createOperation(response.data.id, values.pu, values.qty);
-            })
-            .catch(console.error);
+                .then(response => {
+                    createOperation(response.data.id, values.pu, values.qty);
+                })
+                .catch(console.error);
         } else {
             createOperation(values.product.id, values.pu, values.qty);
         }
@@ -106,19 +107,28 @@ export default function MyDiary() {
         setValues({ ...values, product: value, pu: value.pu });
     }
 
+    const [openConfirm, setOpenConfirm] = React.useState(false);
+    const [currentRow, setCurrentRow] = React.useState(null);
+    const [loadingSubmit, setLoadingSubmit] = React.useState(false);
     const handleDelete = (row) => () => {
-        setLoading(true);
-        http.delete(`operations/${row.id}`)
-        .then(() => {
-            let index = rows.findIndex(r => r.id === row.id);
-            if(index >= 0) {
-                rows.splice(index, 1);
-                setRows([...rows]);
-            }
-        })
-        .finally(() => {
-            setLoading(false);
-        })
+        setCurrentRow(row);
+        setOpenConfirm(true);
+    }
+    const handleConfirmDelete = () => {
+        if (!currentRow) return;
+        setLoadingSubmit(true);
+        http.delete(`operations/${currentRow.id}`)
+            .then(() => {
+                let index = rows.findIndex(r => r.id === currentRow.id);
+                if (index >= 0) {
+                    rows.splice(index, 1);
+                    setRows([...rows]);
+                }
+            })
+            .finally(() => {
+                setOpenConfirm(false);
+                setLoadingSubmit(false);
+            })
     }
 
     const sum = rows.reduce((a, b) => { return { amount: a.amount + b.qty * b.pu } }, { amount: 0 });
@@ -135,7 +145,7 @@ export default function MyDiary() {
                     <CButton variant="outlined" style={{ paddingRight: 2, paddingLeft: 2 }}><KeyboardArrowRight /></CButton>
                 </ButtonGroup>
             </div>
-            {loading && <Loader/>}
+            {loading && <Loader />}
             {!loading &&
                 <Table>
                     <TableHead>
@@ -206,6 +216,15 @@ export default function MyDiary() {
                         </TableRow>
                     </TableBody>
                 </Table>}
+
+            <CDialog open={openConfirm}
+                title={t("common.confirm-delete")} onOK={handleConfirmDelete} onClose={() => setOpenConfirm(false)}
+                okLabel={t("common.delete")} okIcon={<Cancel />} variant="danger" loading={loadingSubmit}
+            >
+                <Alert severity="warning">
+                    {t("my-diary.confirm-delete")}
+                </Alert>
+            </CDialog>
         </>
     );
 }

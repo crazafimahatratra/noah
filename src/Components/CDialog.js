@@ -3,7 +3,7 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, makeStyles } from '@
 import CButton from './CButton';
 import { useTranslation } from 'react-i18next';
 import { Save, Close } from '@material-ui/icons';
-import Spinner from '../Icons/Spinner';
+import Spinner from './Spinner';
 import clsx from 'clsx';
 
 const styles = makeStyles((theme) => ({

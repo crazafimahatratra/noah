@@ -75,6 +75,7 @@
     "title": "My Account"
   },
   "my-diary": {
+    "confirm-delete": "Do you really want to delete this operation ?",
     "subtitle": "Income/Outcome",
     "table": {
       "amount": "Amount",
