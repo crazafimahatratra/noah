@@ -80,10 +80,12 @@
     "title": "My Diary"
   },
   "my-products": {
+    "confirm-delete": "Do you really want to delete the product <1>{{name}}</1> ?",
     "subtitle": "List of my products",
     "table": {
       "label": "Label",
-      "pu": "PU"
+      "pu": "PU",
+      "unit": "Unit"
     },
     "title": "My Products"
   },

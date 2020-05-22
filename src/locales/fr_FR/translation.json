@@ -80,10 +80,12 @@
     "title": "Mon Journal"
   },
   "my-products": {
+    "confirm-delete": "Voulez-vous vraiment supprimer le produit <1>{{name}}</1> ?",
     "subtitle": "Liste de mes produits",
     "table": {
       "label": "Libellé",
-      "pu": "PU"
+      "pu": "PU",
+      "unit": "Unité"
     },
     "title": "Mes Produits"
   },

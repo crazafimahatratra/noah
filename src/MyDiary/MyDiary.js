@@ -196,7 +196,7 @@ export default function MyDiary() {
                         {rows.filter(filterDate).map((row, i) =>
                             <CTableRow key={`row-${i}`}>
                                 <TableCell>{new Intl.DateTimeFormat('fr').format(new Date(row.date))}</TableCell>
-                                <TableCell>{row.product ? row.product.label : ""}</TableCell>
+                                <TableCell className={commonClasses.tdPrimary}>{row.product ? row.product.label : ""}</TableCell>
                                 <TableCell align="right">{new Intl.NumberFormat('fr').format(row.pu)}</TableCell>
                                 <TableCell align="right">{new Intl.NumberFormat('fr').format(row.qty)}</TableCell>
                                 <TableCell align="right">{new Intl.NumberFormat('fr').format(row.qty * row.pu)}</TableCell>
