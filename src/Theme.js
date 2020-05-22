@@ -33,6 +33,9 @@ const commonStyles = makeStyles((theme) => ({
     danger: {
         color: theme.palette.error.main,
     },
+    mt1: {
+        marginTop: theme.spacing(1),
+    },
 }));
 
 export default function useCommonStyles() {

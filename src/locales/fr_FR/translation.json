@@ -81,6 +81,9 @@
   },
   "my-products": {
     "confirm-delete": "Voulez-vous vraiment supprimer le produit <1>{{name}}</1> ?",
+    "dialog": {
+      "edit": "Editer le produit"
+    },
     "subtitle": "Liste de mes produits",
     "table": {
       "label": "Libellé",

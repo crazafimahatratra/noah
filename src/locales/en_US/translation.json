@@ -81,6 +81,9 @@
   },
   "my-products": {
     "confirm-delete": "Do you really want to delete the product <1>{{name}}</1> ?",
+    "dialog": {
+      "edit": "Edit the product"
+    },
     "subtitle": "List of my products",
     "table": {
       "label": "Label",
