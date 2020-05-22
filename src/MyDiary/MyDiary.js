@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import CTitle from '../Components/CTitle';
-import { Table, TableHead, TableRow, TableBody, TableCell, IconButton, makeStyles, ButtonGroup } from '@material-ui/core';
+import { Table, TableHead, TableRow, TableBody, TableCell, IconButton, makeStyles, ButtonGroup, Popover } from '@material-ui/core';
 import { Autocomplete, createFilterOptions, Alert } from '@material-ui/lab'
 import { CTableCellHeader, CTableRow } from '../Components/CTable';
 import { Check, Cancel, KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons';
@@ -11,6 +11,11 @@ import CButton from '../Components/CButton';
 import Http from '../Utils/Http';
 import Loader from '../Components/Loader';
 import CDialog from '../Components/CDialog';
+import {DateRangePicker, Calendar} from 'react-date-range';
+import 'react-date-range/dist/styles.css';
+import 'react-date-range/dist/theme/default.css';
+import format from 'date-fns/format';
+
 let http = new Http();
 
 const styles = makeStyles((theme) => ({
@@ -63,7 +68,7 @@ export default function MyDiary() {
     };
 
     const createOperation = (productId, pu, qty) => {
-        http.post('operations', { date: new Date(), productId: productId, pu: pu, qty: qty })
+        http.post('operations', { date: values.date, productId: productId, pu: pu, qty: qty })
             .then(response => {
                 rows.push(response.data);
                 setRows([...rows]);
@@ -131,20 +136,49 @@ export default function MyDiary() {
             })
     }
 
+    const [anchorCalendar, setAnchorCalendar] = React.useState(null);
+    const handleOpenCalendar = (evt) => {
+        setAnchorCalendar(evt.currentTarget);
+    };
+    const [ranges, setRanges] = React.useState({
+        startDate: new Date(),
+        endDate: new Date(),
+        key: 'selection'
+    })
+
+    const handleRangeChanged = (r) => {
+        if (r.selection) {
+            setRanges({ ...ranges, startDate: r.selection.startDate, endDate: r.selection.endDate });
+        }
+    };
+
     const sum = rows.reduce((a, b) => { return { amount: a.amount + b.qty * b.pu } }, { amount: 0 });
+    const filterDate = (row) => {
+        let d1 = format(ranges.startDate, 'yyyyMMdd');
+        let d2 = format(new Date(row.date), 'yyyyMMdd');
+        let d3 = format(ranges.endDate, 'yyyyMMdd');
+        return d1 <= d2 && d2 <= d3;
+    }
+
+    const [anchorDate, setAnchorDate] = React.useState(null);
     return (
         <>
             <div className={classes.toolbar}>
                 <CTitle subtitle={t("my-diary.subtitle")}>{t("my-diary.title")}</CTitle>
                 <div style={{ flexGrow: 1 }}></div>
-                <h1 className={classes.total}>{new Intl.NumberFormat('fr').format(sum.amount)} Fmg.</h1>
+                <CButton variant="outlined" onClick={handleOpenCalendar}>{new Intl.DateTimeFormat('fr').format(ranges.startDate)} - {new Intl.DateTimeFormat('fr').format(ranges.endDate)}</CButton>
                 <div style={{ flexGrow: 1 }}></div>
-                <ButtonGroup>
-                    <CButton variant="outlined" style={{ paddingRight: 2, paddingLeft: 2 }}><KeyboardArrowLeft /></CButton>
-                    <CButton variant="outlined" color="primary">01/01/2020</CButton>
-                    <CButton variant="outlined" style={{ paddingRight: 2, paddingLeft: 2 }}><KeyboardArrowRight /></CButton>
-                </ButtonGroup>
+                <h1 className={classes.total}>{new Intl.NumberFormat('fr').format(sum.amount)} Fmg.</h1>
             </div>
+
+            <Popover PaperProps={{style: {height: 400}}} anchorOrigin={{horizontal: "left", vertical: "bottom"}} anchorEl={anchorCalendar} open={Boolean(anchorCalendar)} onClose={() => setAnchorCalendar(null)}>
+                <DateRangePicker ranges={[ranges]} onChange={handleRangeChanged}/>
+            </Popover>
+            <Popover PaperProps={{style: {height: 400}}} anchorOrigin={{horizontal: "left", vertical: "bottom"}} anchorEl={anchorDate} open={Boolean(anchorDate)} onClose={() => setAnchorDate(null)}>
+                <Calendar date={values.date} onChange={item => {setValues({...values, date: item})}}/>
+            </Popover>
+            
+
             {loading && <Loader />}
             {!loading &&
                 <Table>
@@ -159,7 +193,7 @@ export default function MyDiary() {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {rows.map((row, i) =>
+                        {rows.filter(filterDate).map((row, i) =>
                             <CTableRow key={`row-${i}`}>
                                 <TableCell>{new Intl.DateTimeFormat('fr').format(new Date(row.date))}</TableCell>
                                 <TableCell>{row.product ? row.product.label : ""}</TableCell>
@@ -172,7 +206,9 @@ export default function MyDiary() {
                             </CTableRow>
                         )}
                         <TableRow>
-                            <TableCell></TableCell>
+                            <TableCell>
+                                <CButton onClick={(evt) => setAnchorDate(evt.currentTarget)}>{format(values.date, "dd/MM/yyyy")}</CButton>
+                            </TableCell>
                             <TableCell>
                                 <Autocomplete options={products} clearOnBlur freeSolo
                                     value={values.product}
