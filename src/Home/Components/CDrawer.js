@@ -1,7 +1,7 @@
 import React from 'react';
 import { Drawer, makeStyles, IconButton, useTheme, useMediaQuery, List, ListItem, ListItemIcon, ListItemText } from "@material-ui/core";
 import Logo from '../../Images/Logo-long.svg';
-import { ChevronLeft, Dashboard, ShoppingCartOutlined } from '@material-ui/icons';
+import { ChevronLeft, Dashboard, ShoppingCartOutlined, BubbleChart } from '@material-ui/icons';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -94,6 +94,10 @@ export default function CDrawer(props) {
                 <ListItem button onClick={handleClick("/products")} selected={location.pathname === "/products"}>
                     <ListItemIcon className={classes.listItemIcon}><ShoppingCartOutlined /></ListItemIcon>
                     <ListItemText classes={{ primary: classes.listItemText }} primary={t("menus.my-products")} />
+                </ListItem>
+                <ListItem button onClick={handleClick("/charts")} selected={location.pathname === "/charts"}>
+                    <ListItemIcon className={classes.listItemIcon}><BubbleChart /></ListItemIcon>
+                    <ListItemText classes={{ primary: classes.listItemText }} primary={t("menus.charts")} />
                 </ListItem>
             </List>
         </Drawer>

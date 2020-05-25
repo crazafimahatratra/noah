@@ -18,6 +18,10 @@
     },
     "title": "Connect"
   },
+  "charts": {
+    "subtitle": "Global view",
+    "title": "Charts"
+  },
   "common": {
     "cancel": "Cancel",
     "confirm-delete": "Confirmation",
@@ -47,6 +51,7 @@
     "LEAVING_TYPE_REQUIRED": "The type of leave is required"
   },
   "menus": {
+    "charts": "Charts",
     "my-diary": "My Diary",
     "my-products": "My Products"
   },

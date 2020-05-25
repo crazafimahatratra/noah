@@ -18,6 +18,10 @@
     },
     "title": "Connectez-vous"
   },
+  "charts": {
+    "subtitle": "Vue globale",
+    "title": "Graphes"
+  },
   "common": {
     "cancel": "Annuler",
     "confirm-delete": "Confirmation de suppression",
@@ -47,6 +51,7 @@
     "LEAVING_TYPE_REQUIRED": "Veuillez choisir un type de congé"
   },
   "menus": {
+    "charts": "Graphes",
     "my-diary": "Mon Journal",
     "my-products": "Mes Produits"
   },

@@ -8,6 +8,7 @@ import { useTheme, useMediaQuery, makeStyles } from '@material-ui/core';
 import Scrollbars from 'react-custom-scrollbars';
 import MyDiary from '../MyDiary/MyDiary';
 import Products from '../Products/Products';
+import Charts from '../Charts/Charts';
 
 let http = new Http();
 
@@ -57,6 +58,9 @@ export default function Home() {
                     <Switch>
                         <Route path="/products">
                             <Products/>
+                        </Route>
+                        <Route path="/charts">
+                            <Charts/>
                         </Route>
                         <Route path="/">
                             <MyDiary />
