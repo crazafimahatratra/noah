@@ -1,22 +1,25 @@
 import React from 'react';
 import CTitle from '../Components/CTitle';
 import { useTranslation } from 'react-i18next';
-import { Grid } from '@material-ui/core';
+import { Grid, makeStyles, Popover } from '@material-ui/core';
 import Http from '../Utils/Http';
 import format from 'date-fns/format';
 import add from 'date-fns/add';
 import startOfMonth from 'date-fns/startOfMonth';
-import getDaysInMonth from 'date-fns/getDaysInMonth';
+import diff from 'date-fns/differenceInDays'
 import { sumByGroup } from '../Utils/Utils';
 
 import { AreaChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Area, ResponsiveContainer, PieChart, Pie, Cell, Sector } from 'recharts';
+import CButton from '../Components/CButton';
+import { DateRangePicker } from 'react-date-range';
+import { endOfMonth } from 'date-fns';
 const http = new Http();
 
 const dateFormat = "yyyy-MM-dd";
 
-const fillDays = (rows) => {
-    let d0 = startOfMonth(new Date());
-    let days = getDaysInMonth(new Date());
+const fillDays = (rows, start, end) => {
+    let d0 = start;
+    let days = diff(end, start);
     for (var i = 0; i < days; i++) {
         let d1 = add(d0, { days: i });
         let r = rows.find(r => r.x === format(d1, dateFormat));
@@ -26,9 +29,21 @@ const fillDays = (rows) => {
     }
 };
 
+const styles = makeStyles((theme) => ({
+    toolbar: {
+        display: "flex",
+        alignItems: "center",
+    },
+    total: {
+        fontSize: 32,
+        fontWeight: 700,
+        color: "#829299",
+    },
+}))
+
 export default function Charts() {
     const [t,] = useTranslation();
-
+    const classes = styles();
     const [data, setData] = React.useState([]);
     React.useEffect(() => {
         http.get("operations").then(response => {
@@ -36,12 +51,25 @@ export default function Charts() {
         });
     }, []);
 
+
+    const [ranges, setRanges] = React.useState({
+        startDate: startOfMonth(new Date()),
+        endDate: endOfMonth(new Date()),
+        key: 'selection'
+    })
+    const filterDate = (row) => {
+        let d1 = format(ranges.startDate, 'yyyyMMdd');
+        let d2 = format(new Date(row.date), 'yyyyMMdd');
+        let d3 = format(ranges.endDate, 'yyyyMMdd');
+        return d1 <= d2 && d2 <= d3;
+    }
+
     const lineData = () => {
-        let d = data.map(d => {
+        let d = data.filter(filterDate).map(d => {
             return { x: format(new Date(d.date), dateFormat), y: d.amount ? d.amount : 0, d: d.date };
         });
         let grouped = sumByGroup(d, "x", "y");
-        fillDays(grouped);
+        fillDays(grouped, ranges.startDate, ranges.endDate);
         grouped.sort((a, b) => {
             if (a.x > b.x) return 1;
             if (a.x < b.x) return -1;
@@ -54,7 +82,7 @@ export default function Charts() {
     }
 
     const pieData = () => {
-        let mapped = data.filter(d => Boolean(d.category)).map(d => {
+        let mapped = data.filter(filterDate).filter(d => Boolean(d.category)).map(d => {
             return {
                 name: d.category.label,
                 value: d.amount,
@@ -67,20 +95,10 @@ export default function Charts() {
 
     let calculatedPieData = pieData();
     const renderActiveShape = (props) => {
-        const RADIAN = Math.PI / 180;
         const {
-            cx, cy, midAngle, innerRadius, outerRadius, startAngle, endAngle,
-            fill, payload, percent, value,
+            cx, cy, innerRadius, outerRadius, startAngle, endAngle,
+            fill, percent,
         } = props;
-        const sin = Math.sin(-RADIAN * midAngle);
-        const cos = Math.cos(-RADIAN * midAngle);
-        const sx = cx + (outerRadius + 10) * cos;
-        const sy = cy + (outerRadius + 10) * sin;
-        const mx = cx + (outerRadius + 30) * cos;
-        const my = cy + (outerRadius + 30) * sin;
-        const ex = mx + (cos >= 0 ? 1 : -1) * 22;
-        const ey = my;
-        const textAnchor = cos >= 0 ? 'start' : 'end';
 
         return (
             <g>
@@ -112,9 +130,28 @@ export default function Charts() {
         setActiveIndex(index);
     };
 
+    const [anchorCalendar, setAnchorCalendar] = React.useState(null);
+    const handleOpenCalendar = (evt) => {
+        setAnchorCalendar(evt.currentTarget);
+    };
+
+    const handleRangeChanged = (r) => {
+        if (r.selection) {
+            setRanges({ ...ranges, startDate: r.selection.startDate, endDate: r.selection.endDate });
+        }
+    };
+
     return (
         <>
-            <CTitle subtitle={t("charts.subtitle")}>{t("charts.title")}</CTitle>
+            <div className={classes.toolbar}>
+                <CTitle subtitle={t("charts.subtitle")}>{t("charts.title")}</CTitle>
+                <div style={{ flexGrow: 1 }}></div>
+                <CButton variant="outlined" onClick={handleOpenCalendar}>{new Intl.DateTimeFormat('fr').format(ranges.startDate)} - {new Intl.DateTimeFormat('fr').format(ranges.endDate)}</CButton>
+            </div>
+            <Popover PaperProps={{ style: { height: 400 } }} anchorOrigin={{ horizontal: "left", vertical: "bottom" }} anchorEl={anchorCalendar} open={Boolean(anchorCalendar)} onClose={() => setAnchorCalendar(null)}>
+                <DateRangePicker ranges={[ranges]} onChange={handleRangeChanged} />
+            </Popover>
+
             <Grid container>
                 <Grid item xs={12} md={6} style={{ height: 300 }}>
                     <ResponsiveContainer>
