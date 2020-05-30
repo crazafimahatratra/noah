@@ -32,7 +32,7 @@ export default function Charts() {
     React.useEffect(() => {
         http.get("operations").then(response => {
             let d = response.data.map(d => {
-                return {x: format(new Date(d.date), dateFormat), y: d.pu * d.qty, d: d.date};
+                return {x: format(new Date(d.date), dateFormat), y: d.amount ? d.amount : 0, d: d.date};
             });
             let grouped = sumByGroup(d, "x", "y");
             fillDays(grouped);

@@ -38,37 +38,37 @@ export default function MyDiary() {
     const [rows, setRows] = React.useState([]);
     const filter = createFilterOptions();
 
-    const [products, setProducts] = React.useState([]);
+    const [categories, setCategories] = React.useState([]);
     React.useEffect(() => {
         setLoading(true);
-        let r1 = http.get('products');
+        let r1 = http.get('categories');
         let r2 = http.get('operations');
         Promise.all([r1, r2])
             .then(([response1, response2]) => {
-                setProducts(response1.data);
+                setCategories(response1.data);
                 setRows(response2.data);
             })
             .catch(console.error)
             .finally(() => setLoading(false));
     }, []);
     const [values, setValues] = React.useState({
-        date: new Date(), product: { label: "", pu: 0 }, qty: 1, pu: 0,
+        date: new Date(), category: { label: "", color: "" }, amount: 0, label: ""
     });
 
     const handleChange = (name) => (evt) => {
         let v = evt.target.value;
-        if (name === "pu" || name === "qty") {
+        if (name === "amount") {
             v = parseInt(v, 10);
             if (isNaN(v)) v = 0;
         }
         setValues({ ...values, [name]: v });
     };
     const handleCancel = () => {
-        setValues({ ...values, product: { label: "", pu: 0 }, qty: 1, pu: 0 });
+        setValues({ ...values, category: { label: "", color: 0 }, amount: 0, label: "" });
     };
 
-    const createOperation = (productId, pu, qty) => {
-        http.post('operations', { date: values.date, productId: productId, pu: pu, qty: qty })
+    const createOperation = (categoryId, amount) => {
+        http.post('operations', { date: values.date, categoryId: categoryId, amount: amount, label: values.label })
             .then(response => {
                 rows.push(response.data);
                 setRows([...rows]);
@@ -78,38 +78,37 @@ export default function MyDiary() {
 
     const handleSubmit = (evt) => {
         evt.preventDefault();
-        if (values.pu * values.qty === 0) return;
-        if (!values.product.id) {
-            values.product.pu = values.pu;
-            http.post('products', values.product)
+        if (values.amount === 0) return;
+        if (!values.category.id) {
+            http.post('categories', values.category)
                 .then(response => {
-                    createOperation(response.data.id, values.pu, values.qty);
+                    createOperation(response.data.id, values.amount);
                 })
                 .catch(console.error);
         } else {
-            createOperation(values.product.id, values.pu, values.qty);
+            createOperation(values.category.id, values.amount);
         }
         handleCancel();
     };
 
-    const createProduct = (label, pu) => {
-        let p = { label: label, pu: pu, unit: "" };
-        products.push(p);
-        setProducts([...products]);
-        setValues({ ...values, product: p });
+    const createCategory = (label, color) => {
+        let p = { label: label, color: "" };
+        categories.push(p);
+        setCategories([...categories]);
+        setValues({ ...values, category: p });
     };
 
     const handleSelect = (_evt, value) => {
         if (!value) return;
         if (value.inputValue) {
-            createProduct(value.inputValue, value.pu);
+            createCategory(value.inputValue, value.color);
             return;
         }
         if (typeof value === "string") {
-            createProduct(value, 0);
+            createCategory(value, 0);
             return;
         }
-        setValues({ ...values, product: value, pu: value.pu });
+        setValues({ ...values, category: value });
     }
 
     const [openConfirm, setOpenConfirm] = React.useState(false);
@@ -158,7 +157,7 @@ export default function MyDiary() {
         let d3 = format(ranges.endDate, 'yyyyMMdd');
         return d1 <= d2 && d2 <= d3;
     }
-    const sum = rows.filter(filterDate).reduce((a, b) => { return { amount: a.amount + b.qty * b.pu } }, { amount: 0 });
+    const sum = rows.filter(filterDate).reduce((a, b) => { return { amount: a.amount + b.amount } }, { amount: 0 });
 
     const [anchorDate, setAnchorDate] = React.useState(null);
     return (
@@ -185,9 +184,8 @@ export default function MyDiary() {
                     <TableHead>
                         <TableRow>
                             <CTableCellHeader style={{ width: 100 }}>{t("my-diary.table.date")}</CTableCellHeader>
+                            <CTableCellHeader>{t("my-diary.table.category")}</CTableCellHeader>
                             <CTableCellHeader>{t("my-diary.table.label")}</CTableCellHeader>
-                            <CTableCellHeader align="right" style={{ width: 150 }}>{t("my-diary.table.pu")}</CTableCellHeader>
-                            <CTableCellHeader align="right" style={{ width: 150 }}>{t("my-diary.table.qte")}</CTableCellHeader>
                             <CTableCellHeader align="right" style={{ width: 150 }}>{t("my-diary.table.amount")}</CTableCellHeader>
                             <CTableCellHeader></CTableCellHeader>
                         </TableRow>
@@ -196,10 +194,14 @@ export default function MyDiary() {
                         {rows.filter(filterDate).map((row, i) =>
                             <CTableRow key={`row-${i}`}>
                                 <TableCell>{new Intl.DateTimeFormat('fr').format(new Date(row.date))}</TableCell>
-                                <TableCell className={commonClasses.tdPrimary}>{row.product ? row.product.label : ""}</TableCell>
-                                <TableCell align="right">{new Intl.NumberFormat('fr').format(row.pu)}</TableCell>
-                                <TableCell align="right">{new Intl.NumberFormat('fr').format(row.qty)}</TableCell>
-                                <TableCell align="right">{new Intl.NumberFormat('fr').format(row.qty * row.pu)}</TableCell>
+                                <TableCell className={commonClasses.tdPrimary}>
+                                    <div style={{display: 'flex', alignItems: 'center'}}>
+                                        <span style={{width: 16, height: 16, display: 'inline-flex', background: row.category ? row.category.color:'#EEEEEE', marginRight: '1rem'}}></span>
+                                        {row.category ? row.category.label : ""}
+                                    </div>
+                                </TableCell>
+                                <TableCell className={commonClasses.tdPrimary}>{row.label}</TableCell>
+                                <TableCell align="right">{new Intl.NumberFormat('fr').format(row.amount)}</TableCell>
                                 <TableCell>
                                     <IconButton onClick={handleDelete(row)} title={t('common.delete')} size="small" className="hoverIcon"><Cancel className={commonClasses.danger} /></IconButton>
                                 </TableCell>
@@ -210,8 +212,8 @@ export default function MyDiary() {
                                 <CButton onClick={(evt) => setAnchorDate(evt.currentTarget)}>{format(values.date, "dd/MM/yyyy")}</CButton>
                             </TableCell>
                             <TableCell>
-                                <Autocomplete options={products} clearOnBlur freeSolo
-                                    value={values.product}
+                                <Autocomplete options={categories} clearOnBlur freeSolo
+                                    value={values.category}
                                     getOptionLabel={(option) => {
                                         if (typeof option === "string") return option;
                                         return option.label;
@@ -235,16 +237,13 @@ export default function MyDiary() {
                             </TableCell>
                             <TableCell>
                                 <form onSubmit={handleSubmit}>
-                                    <CTextField onChange={handleChange("pu")} value={values.pu} fullWidth variant="outlined" size="small" type="number" />
+                                    <CTextField onChange={handleChange("label")} value={values.label} fullWidth variant="outlined" size="small" />
                                 </form>
                             </TableCell>
                             <TableCell>
                                 <form onSubmit={handleSubmit}>
-                                    <CTextField onChange={handleChange("qty")} value={values.qty} fullWidth variant="outlined" size="small" type="number" />
+                                    <CTextField onChange={handleChange("amount")} value={values.amount} fullWidth variant="outlined" size="small" type="number" />
                                 </form>
-                            </TableCell>
-                            <TableCell align="right">
-                                {new Intl.NumberFormat('fr').format(values.qty * values.pu)}
                             </TableCell>
                             <TableCell>
                                 <IconButton onClick={handleSubmit} size="small" color="primary"><Check /></IconButton>
