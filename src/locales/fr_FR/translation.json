@@ -20,7 +20,7 @@
   },
   "charts": {
     "subtitle": "Vue globale",
-    "title": "Graphes"
+    "title": "Tableau de Bord"
   },
   "common": {
     "cancel": "Annuler",
@@ -52,6 +52,7 @@
   },
   "menus": {
     "charts": "Graphes",
+    "dashboard": "Tableau De Bord",
     "my-categories": "Catégories",
     "my-diary": "Mon Journal",
     "my-products": "Mes Produits"

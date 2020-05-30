@@ -176,8 +176,7 @@ export default function Charts() {
         <>
             <div className={classes.toolbar}>
                 <CTitle subtitle={t("charts.subtitle")}>{t("charts.title")}</CTitle>
-                <div style={{ flexGrow: 1 }}></div>
-                <CButton variant="text" onClick={handleOpenCalendar}>
+                <CButton variant="text" onClick={handleOpenCalendar} style={{marginLeft: "1rem"}}>
                     {new Intl.DateTimeFormat('fr').format(ranges.startDate)} - {new Intl.DateTimeFormat('fr').format(ranges.endDate)}
                     <KeyboardArrowDown style={{ marginLeft: "1rem" }} />
                 </CButton>
@@ -229,9 +228,9 @@ export default function Charts() {
                             </MuiTooltip>
                         </h1>
                         <div style={{color: "#505050", fontSize: 12}}>
-                            {p === null && <span>Je n'ai aucune référence. Du coup, je sais pas si c'est cool ou pas :/</span>}
-                            {p > 0 && <span><strong style={{color: "#FC7255"}}>Attention !</strong><br/>Augmentation de <strong>{p} %</strong> par rapport au précédent</span>}
-                            {p < 0 && <span><strong style={{color: "#8DD06A"}}>Cool !!!</strong><br/>Diminution de <strong>{-p} %</strong> par rapport au précédent</span>}
+                                    {p === null && <span>Je n'ai aucune idée de ce que <strong>{total.value} Fmg</strong> représente. Du coup, je sais pas si c'est cool ou pas :/</span>}
+                            {p > 0 && <span><strong style={{color: "#FC7255"}}>Attention !</strong><br/>Augmentation de <strong>{p.toFixed(2)} %</strong> par rapport à la période précédente</span>}
+                            {p < 0 && <span><strong style={{color: "#8DD06A"}}>Cool !!!</strong><br/>Diminution de <strong>{-p.toFixed(2)} %</strong> par rapport à la période précédente</span>}
                             {p === 0 && <span>C'est plutôt stable :)</span>}
                         </div>
                     </div>

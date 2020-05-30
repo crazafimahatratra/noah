@@ -87,6 +87,10 @@ export default function CDrawer(props) {
                 </IconButton>
             </div>
             <List>
+                <ListItem button onClick={handleClick("/charts")} selected={location.pathname === "/charts"}>
+                    <ListItemIcon className={classes.listItemIcon}><BubbleChart /></ListItemIcon>
+                    <ListItemText classes={{ primary: classes.listItemText }} primary={t("menus.dashboard")} />
+                </ListItem>
                 <ListItem button onClick={handleClick("/")} selected={location.pathname === "/"}>
                     <ListItemIcon className={classes.listItemIcon}><Dashboard /></ListItemIcon>
                     <ListItemText classes={{ primary: classes.listItemText }} primary={t("menus.my-diary")} />
@@ -94,10 +98,6 @@ export default function CDrawer(props) {
                 <ListItem button onClick={handleClick("/categories")} selected={location.pathname === "/categories"}>
                     <ListItemIcon className={classes.listItemIcon}><PieChartOutlined /></ListItemIcon>
                     <ListItemText classes={{ primary: classes.listItemText }} primary={t("menus.my-categories")} />
-                </ListItem>
-                <ListItem button onClick={handleClick("/charts")} selected={location.pathname === "/charts"}>
-                    <ListItemIcon className={classes.listItemIcon}><BubbleChart /></ListItemIcon>
-                    <ListItemText classes={{ primary: classes.listItemText }} primary={t("menus.charts")} />
                 </ListItem>
             </List>
         </Drawer>

@@ -118,7 +118,7 @@ export default function Auth() {
     };
 
     if (session.isConnected()) {
-        history.replace("/");
+        history.replace("/charts");
     }
 
     /**
@@ -138,7 +138,7 @@ export default function Auth() {
         http.post(`auth`, { login: values.login, password: values.password }).then((response) => {
             if (response.data.accessToken) {
                 session.setAccessToken(response.data.accessToken);
-                history.push("/");
+                history.push("/charts");
             }
         }).catch((reason) => {
             if (reason.response && reason.response.status === 401) {

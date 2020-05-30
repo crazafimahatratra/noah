@@ -20,7 +20,7 @@
   },
   "charts": {
     "subtitle": "Global view",
-    "title": "Charts"
+    "title": "Dashboard"
   },
   "common": {
     "cancel": "Cancel",
@@ -52,6 +52,7 @@
   },
   "menus": {
     "charts": "Charts",
+    "dashboard": "Dashboard",
     "my-categories": "Categories",
     "my-diary": "My Diary",
     "my-products": "My Products"
