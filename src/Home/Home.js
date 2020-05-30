@@ -7,8 +7,8 @@ import { useHistory, Switch, Route } from 'react-router-dom';
 import { useTheme, useMediaQuery, makeStyles } from '@material-ui/core';
 import Scrollbars from 'react-custom-scrollbars';
 import MyDiary from '../MyDiary/MyDiary';
-import Products from '../Products/Products';
 import Charts from '../Charts/Charts';
+import Categories from '../Categories/Categories';
 
 let http = new Http();
 
@@ -56,8 +56,8 @@ export default function Home() {
             <Scrollbars style={{ height: 'calc(100vh)' }}>
                 <main className={classes.main}>
                     <Switch>
-                        <Route path="/products">
-                            <Products/>
+                        <Route path="/categories">
+                            <Categories/>
                         </Route>
                         <Route path="/charts">
                             <Charts/>

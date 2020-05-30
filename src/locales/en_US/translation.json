@@ -52,6 +52,7 @@
   },
   "menus": {
     "charts": "Charts",
+    "my-categories": "Categories",
     "my-diary": "My Diary",
     "my-products": "My Products"
   },
@@ -71,6 +72,18 @@
       "security": "Security"
     },
     "title": "My Account"
+  },
+  "my-categories": {
+    "confirm-delete": "Do you really want to delete the category <1>{{name}}</1> ?",
+    "dialog": {
+      "edit": "Edit the category"
+    },
+    "subtitle": "List of my categories",
+    "table": {
+      "color": "Color",
+      "label": "Label"
+    },
+    "title": "My Categories"
   },
   "my-diary": {
     "confirm-delete": "Do you really want to delete this operation ?",

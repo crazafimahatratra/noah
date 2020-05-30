@@ -52,6 +52,7 @@
   },
   "menus": {
     "charts": "Graphes",
+    "my-categories": "Catégories",
     "my-diary": "Mon Journal",
     "my-products": "Mes Produits"
   },
@@ -71,6 +72,18 @@
       "security": "Sécurité"
     },
     "title": "Mon Compte"
+  },
+  "my-categories": {
+    "confirm-delete": "Voulez-vous vraiment supprimer la catégorie <1>{{name}}</1> ?",
+    "dialog": {
+      "edit": "Editer la catégorie"
+    },
+    "subtitle": "Liste de mes catégories de produit",
+    "table": {
+      "color": "Couleur",
+      "label": "Libellé"
+    },
+    "title": "Mes Catégories"
   },
   "my-diary": {
     "confirm-delete": "Etes-vous vraiment sûr de vouloir supprimer cette ligne ?",
