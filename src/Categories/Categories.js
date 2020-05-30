@@ -83,7 +83,6 @@ export default function Categories() {
                     <TableHead>
                         <TableRow>
                             <CTableCellHeader>{t("my-categories.table.label")}</CTableCellHeader>
-                            <CTableCellHeader align="right">{t("my-categories.table.color")}</CTableCellHeader>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -95,7 +94,6 @@ export default function Categories() {
                                     <IconButton onClick={handleEdit(row)} title={t('common.edit')} size="small" className="hoverIcon"><Edit /></IconButton>
                                     <IconButton onClick={handleDelete(row)} title={t('common.delete')} size="small" className="hoverIcon"><Cancel className={commonClasses.danger} /></IconButton>
                                 </TableCell>
-                                <TableCell align="right">{row.color}</TableCell>
                             </CTableRow>
                         )}
                     </TableBody>

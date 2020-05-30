@@ -10,12 +10,16 @@ export const groupBy = (array, key) => {
     }, {}); // empty object is the initial value for result object
 };
 
-export const sumByGroup = (array, groupProperty, sumProperty) => {
+export const sumByGroup = (array, groupProperty, sumProperty, other=null) => {
     let grouped = groupBy(array, groupProperty);
     let values = Object.entries(grouped).map(g => {
         let x = g[0];
         let y = g[1].map(t => t[sumProperty]).reduce((a, b) =>  a + b);
-        return {[groupProperty]: x, [sumProperty]: y}
+        let otherFields = null;
+        if(other) {
+            otherFields = {[other]: g[1].length > 0 ? g[1][0][other] : null}
+        }
+        return {[groupProperty]: x, [sumProperty]: y, ...otherFields}
     });
     return values;
 }

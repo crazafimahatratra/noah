@@ -7,8 +7,9 @@ import format from 'date-fns/format';
 import add from 'date-fns/add';
 import startOfMonth from 'date-fns/startOfMonth';
 import getDaysInMonth from 'date-fns/getDaysInMonth';
-import { Chart } from 'react-charts';
 import { sumByGroup } from '../Utils/Utils';
+
+import { AreaChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Area, ResponsiveContainer, PieChart, Pie, Cell, Sector } from 'recharts';
 const http = new Http();
 
 const dateFormat = "yyyy-MM-dd";
@@ -28,37 +29,136 @@ const fillDays = (rows) => {
 export default function Charts() {
     const [t,] = useTranslation();
 
-    const [data, setData] = React.useState([[]]);
+    const [data, setData] = React.useState([]);
     React.useEffect(() => {
         http.get("operations").then(response => {
-            let d = response.data.map(d => {
-                return {x: format(new Date(d.date), dateFormat), y: d.amount ? d.amount : 0, d: d.date};
-            });
-            let grouped = sumByGroup(d, "x", "y");
-            fillDays(grouped);
-            grouped.sort((a, b) => {
-                if(a.x > b.x) return 1;
-                if(a.x < b.x) return -1;
-                return 0;
-            })
-            let formatted = grouped.map(g => {
-                return {x: g.x.substring(8, 10), y: g.y};
-            })
-            setData([[...formatted]]);
+            setData(response.data);
         });
     }, []);
 
-    const axes = React.useMemo(() => [
-        { primary: true, type: 'ordinal', position: 'bottom', show: true },
-        { position: 'left', type: 'linear', show: true }
-    ], []);
+    const lineData = () => {
+        let d = data.map(d => {
+            return { x: format(new Date(d.date), dateFormat), y: d.amount ? d.amount : 0, d: d.date };
+        });
+        let grouped = sumByGroup(d, "x", "y");
+        fillDays(grouped);
+        grouped.sort((a, b) => {
+            if (a.x > b.x) return 1;
+            if (a.x < b.x) return -1;
+            return 0;
+        })
+        let formatted = grouped.map(g => {
+            return { x: g.x.substring(8, 10), amount: g.y };
+        })
+        return ([...formatted]);
+    }
+
+    const pieData = () => {
+        let mapped = data.filter(d => Boolean(d.category)).map(d => {
+            return {
+                name: d.category.label,
+                value: d.amount,
+                color: d.category.color,
+            }
+        });
+        let grouped = sumByGroup(mapped, 'name', 'value', 'color');
+        return grouped;
+    }
+
+    let calculatedPieData = pieData();
+    const renderActiveShape = (props) => {
+        const RADIAN = Math.PI / 180;
+        const {
+            cx, cy, midAngle, innerRadius, outerRadius, startAngle, endAngle,
+            fill, payload, percent, value,
+        } = props;
+        const sin = Math.sin(-RADIAN * midAngle);
+        const cos = Math.cos(-RADIAN * midAngle);
+        const sx = cx + (outerRadius + 10) * cos;
+        const sy = cy + (outerRadius + 10) * sin;
+        const mx = cx + (outerRadius + 30) * cos;
+        const my = cy + (outerRadius + 30) * sin;
+        const ex = mx + (cos >= 0 ? 1 : -1) * 22;
+        const ey = my;
+        const textAnchor = cos >= 0 ? 'start' : 'end';
+
+        return (
+            <g>
+                <text x={cx} y={cy} fontWeight={500} fontSize={16} dy={8} textAnchor="middle" fill={fill}>{(percent * 100).toFixed(2)}%</text>
+                <Sector
+                    cx={cx}
+                    cy={cy}
+                    innerRadius={innerRadius}
+                    outerRadius={outerRadius}
+                    startAngle={startAngle}
+                    endAngle={endAngle}
+                    fill={fill}
+                />
+                <Sector
+                    cx={cx}
+                    cy={cy}
+                    startAngle={startAngle}
+                    endAngle={endAngle}
+                    innerRadius={outerRadius + 6}
+                    outerRadius={outerRadius + 10}
+                    fill={fill}
+                />
+            </g>
+        );
+    };
+
+    const [activeIndex, setActiveIndex] = React.useState(0);
+    const onPieEnter = (data, index) => {
+        setActiveIndex(index);
+    };
 
     return (
         <>
             <CTitle subtitle={t("charts.subtitle")}>{t("charts.title")}</CTitle>
-            <Grid container spacing={1}>
-                <Grid item xs={12} style={{height: 300}}>
-                    <Chart data={data} axes={axes} tooltip />
+            <Grid container>
+                <Grid item xs={12} md={6} style={{ height: 300 }}>
+                    <ResponsiveContainer>
+                        <AreaChart
+                            data={lineData()}
+                            margin={{
+                                top: 5, right: 30, left: 20, bottom: 5,
+                            }}
+                        >
+                            <CartesianGrid strokeDasharray="1 5" />
+                            <XAxis dataKey="x" />
+                            <YAxis />
+                            <Tooltip />
+                            <Legend />
+                            <Area type="monotone" dataKey="amount" stroke="#FC7255" strokeWidth={2} fill="#FC7255" fillOpacity={1} activeDot={{ r: 5 }} />
+                        </AreaChart>
+                    </ResponsiveContainer>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                    <div style={{ height: 300, width: "100%", display: "flex", flexDirection: "row" }}>
+                        <div style={{ flex: "1 1 0" }}>
+                            <ResponsiveContainer>
+                                <PieChart>
+                                    <Pie
+                                        activeShape={renderActiveShape}
+                                        activeIndex={activeIndex}
+                                        onMouseEnter={onPieEnter}
+                                        data={calculatedPieData} dataKey="value" innerRadius={"60%"} paddingAngle={3}>
+                                        {calculatedPieData.map((d, i) => <Cell key={`cell-${i}`} fill={d.color} />)}
+                                    </Pie>
+                                </PieChart>
+                            </ResponsiveContainer>
+                        </div>
+                        <div style={{ display: "flex", flex: "1 1 0", alignItems: "center" }}>
+                            <ul>
+                                {calculatedPieData.map((d, i) =>
+                                    <li key={`li-${i}`} style={{ color: d.color }}>
+                                        {d.name}
+                                        <strong style={{ marginLeft: "1rem", fontSize: 16, fontWeight: 700 }}>({d.value})</strong>
+                                    </li>
+                                )}
+                            </ul>
+                        </div>
+                    </div>
                 </Grid>
             </Grid>
 
