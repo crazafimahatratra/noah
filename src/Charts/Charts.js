@@ -1,7 +1,7 @@
 import React from 'react';
 import CTitle from '../Components/CTitle';
 import { useTranslation } from 'react-i18next';
-import { Grid, makeStyles, Popover } from '@material-ui/core';
+import { Grid, makeStyles, Popover, Tooltip as MuiTooltip } from '@material-ui/core';
 import Http from '../Utils/Http';
 import format from 'date-fns/format';
 import add from 'date-fns/add';
@@ -13,7 +13,7 @@ import { AreaChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Area, Responsi
 import CButton from '../Components/CButton';
 import { DateRangePicker } from 'react-date-range';
 import { endOfMonth } from 'date-fns';
-import { KeyboardArrowDown } from '@material-ui/icons';
+import { KeyboardArrowDown, ArrowUpward, ArrowDownward, ArrowRight, TrendingUp, TrendingDown, TrendingFlat } from '@material-ui/icons';
 const http = new Http();
 
 const dateFormat = "yyyy-MM-dd";
@@ -66,6 +66,16 @@ export default function Charts() {
         let d1 = format(ranges.startDate, 'yyyyMMdd');
         let d2 = format(new Date(row.date), 'yyyyMMdd');
         let d3 = format(ranges.endDate, 'yyyyMMdd');
+        return d1 <= d2 && d2 <= d3;
+    }
+    const filterPreviousDate = (row) => {
+        let end = add(ranges.startDate, { days: -1 });
+        let delta = diff(ranges.startDate, ranges.endDate) - 1;
+        let start = add(end, { days: delta });
+
+        let d1 = format(start, 'yyyyMMdd');
+        let d2 = format(new Date(row.date), 'yyyyMMdd');
+        let d3 = format(end, 'yyyyMMdd');
         return d1 <= d2 && d2 <= d3;
     }
 
@@ -151,6 +161,17 @@ export default function Charts() {
         }
     };
 
+    const total = calculatedPieData.reduce((a, b) => {
+        return { value: a.value + b.value }
+    }, { value: 0 });
+
+    const previousTotal = data.filter(filterPreviousDate).reduce((a, b) => {
+        return { amount: a.amount + b.amount }
+    }, { amount: 0 });
+
+    const delta = total.value - previousTotal.amount;
+    const p = (previousTotal.amount !== 0 ? (100 * delta / previousTotal.amount) : null);
+
     return (
         <>
             <div className={classes.toolbar}>
@@ -166,7 +187,7 @@ export default function Charts() {
             </Popover>
 
             <Grid container spacing={1}>
-                <Grid item xs={12} md={6}>
+                <Grid item xs={12} md={8}>
                     <div className={classes.card}>
                         <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "row" }}>
                             <div style={{ flex: "1 1 0" }}>
@@ -187,7 +208,7 @@ export default function Charts() {
                                     {calculatedPieData.map((d, i) =>
                                         <li key={`li-${i}`} style={{ color: d.color }}>
                                             {d.name}
-                                            <strong style={{ marginLeft: "1rem", fontSize: 16, fontWeight: 700 }}>({d.value})</strong>
+                                            <strong style={{ marginLeft: "1rem", fontSize: 14, fontWeight: 700 }}>({d.value})</strong>
                                         </li>
                                     )}
                                 </ul>
@@ -195,9 +216,24 @@ export default function Charts() {
                         </div>
                     </div>
                 </Grid>
-                <Grid item xs={12} md={6}>
-                    <div className={classes.card}>
-
+                <Grid item xs={12} md={4}>
+                    <div className={classes.card} style={{ padding: "1rem" }}>
+                        <h1 className={classes.total}>
+                            {new Intl.NumberFormat('fr').format(total.value)} Fmg
+                            <MuiTooltip title={`${new Intl.NumberFormat('fr').format(previousTotal.amount)} Fmg`}>
+                                <span style={{ marginLeft: "1rem" }}>
+                                    {total.value > previousTotal.amount && <TrendingUp style={{ color: "#FC7255" }} />}
+                                    {total.value < previousTotal.amount && <TrendingDown style={{ color: "#8DD06A" }} />}
+                                    {total.value === previousTotal.amount && <TrendingFlat />}
+                                </span>
+                            </MuiTooltip>
+                        </h1>
+                        <div style={{color: "#505050", fontSize: 12}}>
+                            {p === null && <span>Je n'ai aucune référence. Du coup, je sais pas si c'est cool ou pas :/</span>}
+                            {p > 0 && <span><strong style={{color: "#FC7255"}}>Attention !</strong><br/>Augmentation de <strong>{p} %</strong> par rapport au précédent</span>}
+                            {p < 0 && <span><strong style={{color: "#8DD06A"}}>Cool !!!</strong><br/>Diminution de <strong>{-p} %</strong> par rapport au précédent</span>}
+                            {p === 0 && <span>C'est plutôt stable :)</span>}
+                        </div>
                     </div>
                 </Grid>
                 <Grid item xs={12}>
@@ -214,7 +250,7 @@ export default function Charts() {
                                 <YAxis />
                                 <Tooltip />
                                 <Legend />
-                                <Area type="monotone" dataKey="amount" stroke="#FC7255" strokeWidth={2} fill="#FC7255" fillOpacity={1} activeDot={{ r: 5 }} />
+                                <Area type="monotone" dataKey="amount" stroke="#FC7255" strokeWidth={2} fill="#FC7255" fillOpacity={0.5} activeDot={{ r: 5 }} />
                             </AreaChart>
                         </ResponsiveContainer>
                     </div>
