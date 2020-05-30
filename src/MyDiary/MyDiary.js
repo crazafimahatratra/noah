@@ -194,7 +194,12 @@ export default function MyDiary() {
                         {rows.filter(filterDate).map((row, i) =>
                             <CTableRow key={`row-${i}`}>
                                 <TableCell>{new Intl.DateTimeFormat('fr').format(new Date(row.date))}</TableCell>
-                                <TableCell className={commonClasses.tdPrimary}>{row.category ? row.category.label : ""}</TableCell>
+                                <TableCell className={commonClasses.tdPrimary}>
+                                    <div style={{display: 'flex', alignItems: 'center'}}>
+                                        <span style={{width: 16, height: 16, display: 'inline-flex', background: row.category ? row.category.color:'#EEEEEE', marginRight: '1rem'}}></span>
+                                        {row.category ? row.category.label : ""}
+                                    </div>
+                                </TableCell>
                                 <TableCell className={commonClasses.tdPrimary}>{row.label}</TableCell>
                                 <TableCell align="right">{new Intl.NumberFormat('fr').format(row.amount)}</TableCell>
                                 <TableCell>
