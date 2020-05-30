@@ -77,6 +77,7 @@
     "subtitle": "Income/Outcome",
     "table": {
       "amount": "Amount",
+      "category": "Category",
       "date": "Date",
       "label": "Label",
       "pu": "PU",
