@@ -13,6 +13,7 @@ import { AreaChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Area, Responsi
 import CButton from '../Components/CButton';
 import { DateRangePicker } from 'react-date-range';
 import { endOfMonth } from 'date-fns';
+import { KeyboardArrowDown } from '@material-ui/icons';
 const http = new Http();
 
 const dateFormat = "yyyy-MM-dd";
@@ -39,6 +40,10 @@ const styles = makeStyles((theme) => ({
         fontWeight: 700,
         color: "#829299",
     },
+    card: {
+        borderWidth: 1, borderStyle: 'solid', borderColor: "#E0E0E0", borderRadius: 5,
+        height: 200,
+    }
 }))
 
 export default function Charts() {
@@ -90,6 +95,11 @@ export default function Charts() {
             }
         });
         let grouped = sumByGroup(mapped, 'name', 'value', 'color');
+        grouped.sort((a, b) => {
+            if (a.value < b.value) return 1;
+            if (a.value > b.value) return -1;
+            return 0;
+        });
         return grouped;
     }
 
@@ -146,55 +156,67 @@ export default function Charts() {
             <div className={classes.toolbar}>
                 <CTitle subtitle={t("charts.subtitle")}>{t("charts.title")}</CTitle>
                 <div style={{ flexGrow: 1 }}></div>
-                <CButton variant="outlined" onClick={handleOpenCalendar}>{new Intl.DateTimeFormat('fr').format(ranges.startDate)} - {new Intl.DateTimeFormat('fr').format(ranges.endDate)}</CButton>
+                <CButton variant="text" onClick={handleOpenCalendar}>
+                    {new Intl.DateTimeFormat('fr').format(ranges.startDate)} - {new Intl.DateTimeFormat('fr').format(ranges.endDate)}
+                    <KeyboardArrowDown style={{ marginLeft: "1rem" }} />
+                </CButton>
             </div>
             <Popover PaperProps={{ style: { height: 400 } }} anchorOrigin={{ horizontal: "left", vertical: "bottom" }} anchorEl={anchorCalendar} open={Boolean(anchorCalendar)} onClose={() => setAnchorCalendar(null)}>
                 <DateRangePicker ranges={[ranges]} onChange={handleRangeChanged} />
             </Popover>
 
-            <Grid container>
-                <Grid item xs={12} md={6} style={{ height: 300 }}>
-                    <ResponsiveContainer>
-                        <AreaChart
-                            data={lineData()}
-                            margin={{
-                                top: 5, right: 30, left: 20, bottom: 5,
-                            }}
-                        >
-                            <CartesianGrid strokeDasharray="1 5" />
-                            <XAxis dataKey="x" />
-                            <YAxis />
-                            <Tooltip />
-                            <Legend />
-                            <Area type="monotone" dataKey="amount" stroke="#FC7255" strokeWidth={2} fill="#FC7255" fillOpacity={1} activeDot={{ r: 5 }} />
-                        </AreaChart>
-                    </ResponsiveContainer>
+            <Grid container spacing={1}>
+                <Grid item xs={12} md={6}>
+                    <div className={classes.card}>
+                        <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "row" }}>
+                            <div style={{ flex: "1 1 0" }}>
+                                <ResponsiveContainer>
+                                    <PieChart>
+                                        <Pie
+                                            activeShape={renderActiveShape}
+                                            activeIndex={activeIndex}
+                                            onMouseEnter={onPieEnter}
+                                            data={calculatedPieData} dataKey="value" innerRadius={"60%"} paddingAngle={3}>
+                                            {calculatedPieData.map((d, i) => <Cell key={`cell-${i}`} fill={d.color} />)}
+                                        </Pie>
+                                    </PieChart>
+                                </ResponsiveContainer>
+                            </div>
+                            <div style={{ display: "flex", flex: "1 1 0", alignItems: "center" }}>
+                                <ul>
+                                    {calculatedPieData.map((d, i) =>
+                                        <li key={`li-${i}`} style={{ color: d.color }}>
+                                            {d.name}
+                                            <strong style={{ marginLeft: "1rem", fontSize: 16, fontWeight: 700 }}>({d.value})</strong>
+                                        </li>
+                                    )}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                 </Grid>
                 <Grid item xs={12} md={6}>
-                    <div style={{ height: 300, width: "100%", display: "flex", flexDirection: "row" }}>
-                        <div style={{ flex: "1 1 0" }}>
-                            <ResponsiveContainer>
-                                <PieChart>
-                                    <Pie
-                                        activeShape={renderActiveShape}
-                                        activeIndex={activeIndex}
-                                        onMouseEnter={onPieEnter}
-                                        data={calculatedPieData} dataKey="value" innerRadius={"60%"} paddingAngle={3}>
-                                        {calculatedPieData.map((d, i) => <Cell key={`cell-${i}`} fill={d.color} />)}
-                                    </Pie>
-                                </PieChart>
-                            </ResponsiveContainer>
-                        </div>
-                        <div style={{ display: "flex", flex: "1 1 0", alignItems: "center" }}>
-                            <ul>
-                                {calculatedPieData.map((d, i) =>
-                                    <li key={`li-${i}`} style={{ color: d.color }}>
-                                        {d.name}
-                                        <strong style={{ marginLeft: "1rem", fontSize: 16, fontWeight: 700 }}>({d.value})</strong>
-                                    </li>
-                                )}
-                            </ul>
-                        </div>
+                    <div className={classes.card}>
+
+                    </div>
+                </Grid>
+                <Grid item xs={12}>
+                    <div className={classes.card} style={{ height: 250, paddingTop: "2rem" }}>
+                        <ResponsiveContainer>
+                            <AreaChart
+                                data={lineData()}
+                                margin={{
+                                    top: 5, right: 30, left: 20, bottom: 5,
+                                }}
+                            >
+                                <CartesianGrid strokeDasharray="1 5" />
+                                <XAxis dataKey="x" />
+                                <YAxis />
+                                <Tooltip />
+                                <Legend />
+                                <Area type="monotone" dataKey="amount" stroke="#FC7255" strokeWidth={2} fill="#FC7255" fillOpacity={1} activeDot={{ r: 5 }} />
+                            </AreaChart>
+                        </ResponsiveContainer>
                     </div>
                 </Grid>
             </Grid>

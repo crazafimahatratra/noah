@@ -4,7 +4,7 @@ import CTitle from '../Components/CTitle';
 import { Table, TableHead, TableRow, TableBody, TableCell, IconButton, makeStyles, Popover } from '@material-ui/core';
 import { Autocomplete, createFilterOptions, Alert } from '@material-ui/lab'
 import { CTableCellHeader, CTableRow } from '../Components/CTable';
-import { Check, Cancel } from '@material-ui/icons';
+import { Check, Cancel, KeyboardArrowDown } from '@material-ui/icons';
 import CTextField from '../Components/CTextField';
 import useCommonStyles from '../Theme';
 import CButton from '../Components/CButton';
@@ -165,7 +165,10 @@ export default function MyDiary() {
             <div className={classes.toolbar}>
                 <CTitle subtitle={t("my-diary.subtitle")}>{t("my-diary.title")}</CTitle>
                 <div style={{ flexGrow: 1 }}></div>
-                <CButton variant="outlined" onClick={handleOpenCalendar}>{new Intl.DateTimeFormat('fr').format(ranges.startDate)} - {new Intl.DateTimeFormat('fr').format(ranges.endDate)}</CButton>
+                <CButton variant="text" onClick={handleOpenCalendar}>
+                    {new Intl.DateTimeFormat('fr').format(ranges.startDate)} - {new Intl.DateTimeFormat('fr').format(ranges.endDate)}
+                    <KeyboardArrowDown/>
+                </CButton>
                 <div style={{ flexGrow: 1 }}></div>
                 <h1 className={classes.total}>{new Intl.NumberFormat('fr').format(sum.amount)} Fmg.</h1>
             </div>
