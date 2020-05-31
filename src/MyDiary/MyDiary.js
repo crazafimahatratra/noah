@@ -1,10 +1,10 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import CTitle from '../Components/CTitle';
-import { Table, TableHead, TableRow, TableBody, TableCell, IconButton, makeStyles, Popover } from '@material-ui/core';
+import { Table, TableHead, TableRow, TableBody, TableCell, IconButton, makeStyles, Popover, Hidden, TableFooter, useTheme, useMediaQuery } from '@material-ui/core';
 import { Autocomplete, createFilterOptions, Alert } from '@material-ui/lab'
 import { CTableCellHeader, CTableRow } from '../Components/CTable';
-import { Check, Cancel, KeyboardArrowDown } from '@material-ui/icons';
+import { Check, Cancel, KeyboardArrowDown, CalendarToday } from '@material-ui/icons';
 import CTextField from '../Components/CTextField';
 import useCommonStyles from '../Theme';
 import CButton from '../Components/CButton';
@@ -24,9 +24,9 @@ const styles = makeStyles((theme) => ({
         alignItems: "center",
     },
     total: {
-        fontSize: 32,
         fontWeight: 700,
         color: "#829299",
+        margin: 0,
     },
 }))
 
@@ -160,18 +160,22 @@ export default function MyDiary() {
     const sum = rows.filter(filterDate).reduce((a, b) => { return { amount: a.amount + b.amount } }, { amount: 0 });
 
     const [anchorDate, setAnchorDate] = React.useState(null);
+
+    const theme = useTheme();
+    const xs = useMediaQuery(theme.breakpoints.down("xs"));
     return (
         <>
             <div className={classes.toolbar}>
                 <CTitle subtitle={t("my-diary.subtitle")}>{t("my-diary.title")}</CTitle>
                 <div style={{ flexGrow: 1 }}></div>
                 <CButton variant="text" onClick={handleOpenCalendar}>
-                    {new Intl.DateTimeFormat('fr').format(ranges.startDate)} - {new Intl.DateTimeFormat('fr').format(ranges.endDate)}
-                    <KeyboardArrowDown/>
+                    {!xs && <>{new Intl.DateTimeFormat('fr').format(ranges.startDate)} - {new Intl.DateTimeFormat('fr').format(ranges.endDate)}<KeyboardArrowDown /></>}
+                    {xs && <><CalendarToday /></>}
                 </CButton>
-                <div style={{ flexGrow: 1 }}></div>
-                <h1 className={classes.total}>{new Intl.NumberFormat('fr').format(sum.amount)} Fmg.</h1>
+                {!xs && <><div style={{ flexGrow: 1 }}></div><h1 className={classes.total}>{new Intl.NumberFormat('fr').format(sum.amount)} Fmg</h1></>}
             </div>
+
+            {xs && <><h1 className={classes.total}>{new Intl.NumberFormat('fr').format(sum.amount)} Fmg</h1></>}
 
             <Popover PaperProps={{ style: { height: 400 } }} anchorOrigin={{ horizontal: "left", vertical: "bottom" }} anchorEl={anchorCalendar} open={Boolean(anchorCalendar)} onClose={() => setAnchorCalendar(null)}>
                 <DateRangePicker ranges={[ranges]} onChange={handleRangeChanged} />
@@ -186,11 +190,11 @@ export default function MyDiary() {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <CTableCellHeader style={{ width: 100 }}>{t("my-diary.table.date")}</CTableCellHeader>
-                            <CTableCellHeader>{t("my-diary.table.category")}</CTableCellHeader>
-                            <CTableCellHeader>{t("my-diary.table.label")}</CTableCellHeader>
-                            <CTableCellHeader align="right" style={{ width: 150 }}>{t("my-diary.table.amount")}</CTableCellHeader>
-                            <CTableCellHeader></CTableCellHeader>
+                            {!xs && <><CTableCellHeader style={{ width: 100 }}>{t("my-diary.table.date")}</CTableCellHeader>
+                                <CTableCellHeader>{t("my-diary.table.category")}</CTableCellHeader>
+                                <CTableCellHeader>{t("my-diary.table.label")}</CTableCellHeader>
+                                <CTableCellHeader align="right" style={{ width: 150 }}>{t("my-diary.table.amount")}</CTableCellHeader>
+                                <CTableCellHeader></CTableCellHeader></>}
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -198,18 +202,20 @@ export default function MyDiary() {
                             <CTableRow key={`row-${i}`}>
                                 <TableCell>{new Intl.DateTimeFormat('fr').format(new Date(row.date))}</TableCell>
                                 <TableCell className={commonClasses.tdPrimary}>
-                                    <div style={{display: 'flex', alignItems: 'center'}}>
-                                        <span style={{width: 16, height: 16, display: 'inline-flex', background: row.category ? row.category.color:'#EEEEEE', marginRight: '1rem'}}></span>
+                                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                                        <span style={{ width: 16, height: 16, display: 'inline-flex', background: row.category ? row.category.color : '#EEEEEE', marginRight: '1rem' }}></span>
                                         {row.category ? row.category.label : ""}
                                     </div>
                                 </TableCell>
-                                <TableCell className={commonClasses.tdPrimary}>{row.label}</TableCell>
+                                {!xs && <TableCell className={commonClasses.tdPrimary}>{row.label}</TableCell>}
                                 <TableCell align="right">{new Intl.NumberFormat('fr').format(row.amount)}</TableCell>
                                 <TableCell>
                                     <IconButton onClick={handleDelete(row)} title={t('common.delete')} size="small" className="hoverIcon"><Cancel className={commonClasses.danger} /></IconButton>
                                 </TableCell>
                             </CTableRow>
                         )}
+                    </TableBody>
+                    {!xs && <TableFooter>
                         <TableRow>
                             <TableCell>
                                 <CButton onClick={(evt) => setAnchorDate(evt.currentTarget)}>{format(values.date, "dd/MM/yyyy")}</CButton>
@@ -252,8 +258,9 @@ export default function MyDiary() {
                                 <IconButton onClick={handleSubmit} size="small" color="primary"><Check /></IconButton>
                             </TableCell>
                         </TableRow>
-                    </TableBody>
-                </Table>}
+                    </TableFooter>}
+                </Table>
+            }
 
             <CDialog open={openConfirm}
                 title={t("common.confirm-delete")} onOK={handleConfirmDelete} onClose={() => setOpenConfirm(false)}

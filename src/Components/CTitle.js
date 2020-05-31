@@ -3,9 +3,17 @@ import { makeStyles } from '@material-ui/core';
 
 const styles = makeStyles((theme) => ({
     root: {
+        [theme.breakpoints.down("xs")]: {
+            width: "100%"
+        }
+    },
+    title: {
         fontSize: 32,
         marginBottom: 0,
         color: "black",
+        [theme.breakpoints.down("xs")]: {
+            margin: 0,
+        }
     },
     subtitle: {
         fontSize: 18,
@@ -13,7 +21,7 @@ const styles = makeStyles((theme) => ({
         color: "#829299",
         marginTop: theme.spacing(1),
         fontWeight: 400,
-        marginBottom: theme.spacing(4),
+        marginBottom: theme.spacing(2)
     },
 }));
 
@@ -24,8 +32,8 @@ const styles = makeStyles((theme) => ({
 export default function CTitle(props) {
     const classes = styles();
     return (
-        <div>
-            <h1 className={classes.root}>{props.children}</h1>
+        <div className={classes.root}>
+            <h1 className={classes.title}>{props.children}</h1>
             {props.subtitle && <h2 className={classes.subtitle}>{props.subtitle}</h2>}
         </div>
     )
