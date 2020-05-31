@@ -1,10 +1,10 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import CTitle from '../Components/CTitle';
-import { Table, TableHead, TableRow, TableBody, TableCell, IconButton, makeStyles, Popover, Hidden, TableFooter, useTheme, useMediaQuery } from '@material-ui/core';
+import { Table, TableHead, TableRow, TableBody, TableCell, IconButton, makeStyles, Popover, TableFooter, useTheme, useMediaQuery } from '@material-ui/core';
 import { Autocomplete, createFilterOptions, Alert } from '@material-ui/lab'
 import { CTableCellHeader, CTableRow } from '../Components/CTable';
-import { Check, Cancel, KeyboardArrowDown, CalendarToday } from '@material-ui/icons';
+import { Check, Cancel, KeyboardArrowDown, CalendarToday, Add } from '@material-ui/icons';
 import CTextField from '../Components/CTextField';
 import useCommonStyles from '../Theme';
 import CButton from '../Components/CButton';
@@ -15,6 +15,7 @@ import { DateRangePicker, Calendar } from 'react-date-range';
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 import format from 'date-fns/format';
+import CFab from '../Components/CFab';
 
 let http = new Http();
 
@@ -22,11 +23,13 @@ const styles = makeStyles((theme) => ({
     toolbar: {
         display: "flex",
         alignItems: "center",
+        [theme.breakpoints.down("xs")]: {
+            alignItems: "flex-start",
+        }
     },
     total: {
         fontWeight: 700,
         color: "#829299",
-        margin: 0,
     },
 }))
 
@@ -76,6 +79,7 @@ export default function MyDiary() {
             .catch(console.error);
     }
 
+    const [openEdit, setOpenEdit] = React.useState(false);
     const handleSubmit = (evt) => {
         evt.preventDefault();
         if (values.amount === 0) return;
@@ -88,7 +92,9 @@ export default function MyDiary() {
         } else {
             createOperation(values.category.id, values.amount);
         }
+
         handleCancel();
+        setOpenEdit(false);
     };
 
     const createCategory = (label, color) => {
@@ -163,6 +169,29 @@ export default function MyDiary() {
 
     const theme = useTheme();
     const xs = useMediaQuery(theme.breakpoints.down("xs"));
+
+    const pickCategories = <Autocomplete options={categories} clearOnBlur freeSolo
+        value={values.category}
+        getOptionLabel={(option) => {
+            if (typeof option === "string") return option;
+            return option.label;
+        }}
+        renderInput={(params) => <CTextField {...params} label={t("my-diary.table.category")} variant="outlined" size="small" fullWidth />}
+        onChange={handleSelect}
+        filterOptions={(options, params) => {
+            const filtered = filter(options, params);
+            // Suggest the creation of a new value
+            if (params.inputValue !== '') {
+                filtered.push({
+                    inputValue: params.inputValue,
+                    label: `Add "${params.inputValue}"`,
+                    pu: 0
+                });
+            }
+
+            return filtered;
+        }}
+    />
     return (
         <>
             <div className={classes.toolbar}>
@@ -170,7 +199,7 @@ export default function MyDiary() {
                 <div style={{ flexGrow: 1 }}></div>
                 <CButton variant="text" onClick={handleOpenCalendar}>
                     {!xs && <>{new Intl.DateTimeFormat('fr').format(ranges.startDate)} - {new Intl.DateTimeFormat('fr').format(ranges.endDate)}<KeyboardArrowDown /></>}
-                    {xs && <><CalendarToday /></>}
+                    {xs && <><CalendarToday style={{ margin: 0 }} /></>}
                 </CButton>
                 {!xs && <><div style={{ flexGrow: 1 }}></div><h1 className={classes.total}>{new Intl.NumberFormat('fr').format(sum.amount)} Fmg</h1></>}
             </div>
@@ -181,7 +210,7 @@ export default function MyDiary() {
                 <DateRangePicker ranges={[ranges]} onChange={handleRangeChanged} />
             </Popover>
             <Popover PaperProps={{ style: { height: 400 } }} anchorOrigin={{ horizontal: "left", vertical: "bottom" }} anchorEl={anchorDate} open={Boolean(anchorDate)} onClose={() => setAnchorDate(null)}>
-                <Calendar date={values.date} onChange={item => { setValues({ ...values, date: item }) }} />
+                <Calendar date={values.date} onChange={item => { setValues({ ...values, date: item }); setAnchorDate(null); }} />
             </Popover>
 
 
@@ -200,15 +229,30 @@ export default function MyDiary() {
                     <TableBody>
                         {rows.filter(filterDate).map((row, i) =>
                             <CTableRow key={`row-${i}`}>
-                                <TableCell>{new Intl.DateTimeFormat('fr').format(new Date(row.date))}</TableCell>
-                                <TableCell className={commonClasses.tdPrimary}>
-                                    <div style={{ display: 'flex', alignItems: 'center' }}>
-                                        <span style={{ width: 16, height: 16, display: 'inline-flex', background: row.category ? row.category.color : '#EEEEEE', marginRight: '1rem' }}></span>
-                                        {row.category ? row.category.label : ""}
-                                    </div>
-                                </TableCell>
-                                {!xs && <TableCell className={commonClasses.tdPrimary}>{row.label}</TableCell>}
-                                <TableCell align="right">{new Intl.NumberFormat('fr').format(row.amount)}</TableCell>
+                                {!xs && <><TableCell>{new Intl.DateTimeFormat('fr').format(new Date(row.date))}</TableCell>
+                                    <TableCell className={commonClasses.tdPrimary}>
+                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                            <span style={{ width: 16, height: 16, borderRadius: 20, display: 'inline-flex', background: row.category ? row.category.color : '#EEEEEE', marginRight: '1rem' }}></span>
+                                            {row.category ? row.category.label : ""}
+                                        </div>
+                                    </TableCell>
+                                    <TableCell className={commonClasses.tdPrimary}>{row.label}</TableCell>
+                                    <TableCell align="right">{new Intl.NumberFormat('fr').format(row.amount)}</TableCell></>}
+                                {xs &&
+                                <>
+                                    <TableCell>
+                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                            <span style={{ width: 8, height: 8, borderRadius: 20, display: 'inline-flex', background: row.category ? row.category.color : '#EEEEEE', marginRight: '1rem' }}></span>
+                                            {row.category ? row.category.label : ""}
+                                        </div>
+                                        {new Intl.DateTimeFormat('fr').format(new Date(row.date))}&nbsp;-&nbsp;
+                                        {row.label}
+                                    </TableCell>
+                                    <TableCell align="right" style={{ paddingRight: 0, paddingLeft: 0 }}>
+                                    <span style={{ fontSize: 20, fontWeight: 700, marginLeft: "2rem" }}>{new Intl.NumberFormat('fr').format(row.amount)} Fmg</span>
+                                    </TableCell>
+                                    </>
+                                }
                                 <TableCell>
                                     <IconButton onClick={handleDelete(row)} title={t('common.delete')} size="small" className="hoverIcon"><Cancel className={commonClasses.danger} /></IconButton>
                                 </TableCell>
@@ -221,28 +265,7 @@ export default function MyDiary() {
                                 <CButton onClick={(evt) => setAnchorDate(evt.currentTarget)}>{format(values.date, "dd/MM/yyyy")}</CButton>
                             </TableCell>
                             <TableCell>
-                                <Autocomplete options={categories} clearOnBlur freeSolo
-                                    value={values.category}
-                                    getOptionLabel={(option) => {
-                                        if (typeof option === "string") return option;
-                                        return option.label;
-                                    }}
-                                    renderInput={(params) => <CTextField {...params} variant="outlined" size="small" fullWidth />}
-                                    onChange={handleSelect}
-                                    filterOptions={(options, params) => {
-                                        const filtered = filter(options, params);
-                                        // Suggest the creation of a new value
-                                        if (params.inputValue !== '') {
-                                            filtered.push({
-                                                inputValue: params.inputValue,
-                                                label: `Add "${params.inputValue}"`,
-                                                pu: 0
-                                            });
-                                        }
-
-                                        return filtered;
-                                    }}
-                                />
+                                {pickCategories}
                             </TableCell>
                             <TableCell>
                                 <form onSubmit={handleSubmit}>
@@ -270,6 +293,14 @@ export default function MyDiary() {
                     {t("my-diary.confirm-delete")}
                 </Alert>
             </CDialog>
+
+            <CDialog open={openEdit} onClose={() => setOpenEdit(false)} onOK={handleSubmit}>
+                {pickCategories}
+                <CTextField className={commonClasses.mt1} fullWidth variant="outlined" size="small" onClick={(evt) => setAnchorDate(evt.currentTarget)} value={format(values.date, "dd/MM/yyyy")}/>
+                <CTextField className={commonClasses.mt1} label={t("my-diary.table.label")} onChange={handleChange("label")} value={values.label} fullWidth variant="outlined" size="small" />
+                <CTextField className={commonClasses.mt1} label={t("my-diary.table.amount")} onChange={handleChange("amount")} value={values.amount} fullWidth variant="outlined" size="small" type="number" />
+            </CDialog>
+            {xs && <CFab color="primary" onClick={() => setOpenEdit(true)}><Add /></CFab>}
         </>
     );
 }

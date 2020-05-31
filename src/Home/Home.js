@@ -5,20 +5,22 @@ import Http from '../Utils/Http';
 import { UserContext } from '../AppContext';
 import { useHistory, Switch, Route } from 'react-router-dom';
 import { useTheme, useMediaQuery, makeStyles } from '@material-ui/core';
-import Scrollbars from 'react-custom-scrollbars';
 import MyDiary from '../MyDiary/MyDiary';
 import Charts from '../Charts/Charts';
 import Categories from '../Categories/Categories';
 
 let http = new Http();
 
-const styles = makeStyles(() => ({
+const styles = makeStyles((theme) => ({
     root: {
         display: "flex"
     },
     main: {
         flexGrow: 1,
-        padding: "70px 30px"
+        padding: "70px 30px",
+        [theme.breakpoints.down("xs")]: {
+            padding: "70px 20px",
+        }
     }
 }));
 
@@ -53,7 +55,6 @@ export default function Home() {
         <div className={classes.root}>
             <CAppBar onToggleMenu={handleDrawerOpen} />
             <CDrawer open={openDrawer} onClose={handleDrawerClose} />
-            <Scrollbars style={{ height: 'calc(100vh)' }}>
                 <main className={classes.main}>
                     <Switch>
                         <Route path="/categories">
@@ -67,7 +68,6 @@ export default function Home() {
                         </Route>
                     </Switch>
                 </main>
-            </Scrollbars>
         </div>
     );
 }

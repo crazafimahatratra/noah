@@ -8,7 +8,6 @@ const styles = makeStyles((theme) => ({
         }
     },
     title: {
-        fontSize: 32,
         marginBottom: 0,
         color: "black",
         [theme.breakpoints.down("xs")]: {
@@ -16,7 +15,6 @@ const styles = makeStyles((theme) => ({
         }
     },
     subtitle: {
-        fontSize: 18,
         lineHeight: 0,
         color: "#829299",
         marginTop: theme.spacing(1),
