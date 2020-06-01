@@ -1,10 +1,10 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import CTitle from '../Components/CTitle';
-import { Table, TableHead, TableRow, TableBody, TableCell, IconButton, makeStyles, Popover, TableFooter, useTheme, useMediaQuery } from '@material-ui/core';
+import { Table, TableHead, TableRow, TableBody, TableCell, IconButton, makeStyles, Popover, useTheme, useMediaQuery } from '@material-ui/core';
 import { Autocomplete, createFilterOptions, Alert } from '@material-ui/lab'
 import { CTableCellHeader, CTableRow } from '../Components/CTable';
-import { Check, Cancel, KeyboardArrowDown, CalendarToday, Add } from '@material-ui/icons';
+import { Cancel, KeyboardArrowDown, CalendarToday, Add, Edit } from '@material-ui/icons';
 import CTextField from '../Components/CTextField';
 import useCommonStyles from '../Theme';
 import CButton from '../Components/CButton';
@@ -67,16 +67,25 @@ export default function MyDiary() {
         setValues({ ...values, [name]: v });
     };
     const handleCancel = () => {
-        setValues({ ...values, category: { label: "", color: 0 }, amount: 0, label: "" });
+        setValues({ ...values, category: { label: "", color: 0 }, amount: 0, label: "", id: 0 });
     };
 
-    const createOperation = (categoryId, amount) => {
-        http.post('operations', { date: values.date, categoryId: categoryId, amount: amount, label: values.label })
-            .then(response => {
-                rows.push(response.data);
+    const createOperation = (categoryId) => {
+        let row = { date: values.date, categoryId: categoryId, amount: values.amount, label: values.label };
+        if (values.id) {
+            http.put(`operations/${values.id}`, row).then(response => {
+                let index = rows.findIndex(r => r.id === values.id);
+                rows.splice(index, 1, response.data);
                 setRows([...rows]);
             })
-            .catch(console.error);
+        } else {
+            http.post('operations', row)
+                .then(response => {
+                    rows.push(response.data);
+                    setRows([...rows]);
+                })
+                .catch(console.error);
+        }
     }
 
     const [openEdit, setOpenEdit] = React.useState(false);
@@ -86,18 +95,18 @@ export default function MyDiary() {
         if (!values.category.id) {
             http.post('categories', values.category)
                 .then(response => {
-                    createOperation(response.data.id, values.amount);
+                    createOperation(response.data.id);
                 })
                 .catch(console.error);
         } else {
-            createOperation(values.category.id, values.amount);
+            createOperation(values.category.id);
         }
 
         handleCancel();
         setOpenEdit(false);
     };
 
-    const createCategory = (label, color) => {
+    const createCategory = (label) => {
         let p = { label: label, color: "" };
         categories.push(p);
         setCategories([...categories]);
@@ -124,6 +133,14 @@ export default function MyDiary() {
         setCurrentRow(row);
         setOpenConfirm(true);
     }
+    const handleEdit = (row) => () => {
+        if (row)
+            setValues({ ...values, date: new Date(row.date), category: row.category, amount: row.amount, label: row.label, id: row.id })
+        else
+            handleCancel();
+        setOpenEdit(true);
+    }
+
     const handleConfirmDelete = () => {
         if (!currentRow) return;
         setLoadingSubmit(true);
@@ -197,6 +214,7 @@ export default function MyDiary() {
             <div className={classes.toolbar}>
                 <CTitle subtitle={t("my-diary.subtitle")}>{t("my-diary.title")}</CTitle>
                 <div style={{ flexGrow: 1 }}></div>
+                {!xs && <CButton onClick={handleEdit(null)} color="primary" style={{ marginRight: "1rem" }} variant="outlined"><Add /> {t("common.new-entry")}</CButton>}
                 <CButton variant="text" onClick={handleOpenCalendar}>
                     {!xs && <>{new Intl.DateTimeFormat('fr').format(ranges.startDate)} - {new Intl.DateTimeFormat('fr').format(ranges.endDate)}<KeyboardArrowDown /></>}
                     {xs && <><CalendarToday style={{ margin: 0 }} /></>}
@@ -239,49 +257,27 @@ export default function MyDiary() {
                                     <TableCell className={commonClasses.tdPrimary}>{row.label}</TableCell>
                                     <TableCell align="right">{new Intl.NumberFormat('fr').format(row.amount)}</TableCell></>}
                                 {xs &&
-                                <>
-                                    <TableCell>
-                                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                                            <span style={{ width: 8, height: 8, borderRadius: 20, display: 'inline-flex', background: row.category ? row.category.color : '#EEEEEE', marginRight: '1rem' }}></span>
-                                            {row.category ? row.category.label : ""}
-                                        </div>
-                                        {new Intl.DateTimeFormat('fr').format(new Date(row.date))}&nbsp;-&nbsp;
+                                    <>
+                                        <TableCell>
+                                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                <span style={{ width: 8, height: 8, borderRadius: 20, display: 'inline-flex', background: row.category ? row.category.color : '#EEEEEE', marginRight: '1rem' }}></span>
+                                                {row.category ? row.category.label : ""}
+                                            </div>
+                                            {new Intl.DateTimeFormat('fr').format(new Date(row.date))}&nbsp;-&nbsp;
                                         {row.label}
-                                    </TableCell>
-                                    <TableCell align="right" style={{ paddingRight: 0, paddingLeft: 0 }}>
-                                    <span style={{ fontSize: 20, fontWeight: 700, marginLeft: "2rem" }}>{new Intl.NumberFormat('fr').format(row.amount)} Fmg</span>
-                                    </TableCell>
+                                        </TableCell>
+                                        <TableCell align="right" style={{ paddingRight: 0, paddingLeft: 0 }}>
+                                            <span style={{ fontSize: 20, fontWeight: 700, marginLeft: "2rem" }}>{new Intl.NumberFormat('fr').format(row.amount)} Fmg</span>
+                                        </TableCell>
                                     </>
                                 }
                                 <TableCell>
                                     <IconButton onClick={handleDelete(row)} title={t('common.delete')} size="small" className="hoverIcon"><Cancel className={commonClasses.danger} /></IconButton>
+                                    <IconButton onClick={handleEdit(row)} title={t('common.delete')} size="small" className="hoverIcon"><Edit /></IconButton>
                                 </TableCell>
                             </CTableRow>
                         )}
                     </TableBody>
-                    {!xs && <TableFooter>
-                        <TableRow>
-                            <TableCell>
-                                <CButton onClick={(evt) => setAnchorDate(evt.currentTarget)}>{format(values.date, "dd/MM/yyyy")}</CButton>
-                            </TableCell>
-                            <TableCell>
-                                {pickCategories}
-                            </TableCell>
-                            <TableCell>
-                                <form onSubmit={handleSubmit}>
-                                    <CTextField onChange={handleChange("label")} value={values.label} fullWidth variant="outlined" size="small" />
-                                </form>
-                            </TableCell>
-                            <TableCell>
-                                <form onSubmit={handleSubmit}>
-                                    <CTextField onChange={handleChange("amount")} value={values.amount} fullWidth variant="outlined" size="small" type="number" />
-                                </form>
-                            </TableCell>
-                            <TableCell>
-                                <IconButton onClick={handleSubmit} size="small" color="primary"><Check /></IconButton>
-                            </TableCell>
-                        </TableRow>
-                    </TableFooter>}
                 </Table>
             }
 
@@ -294,13 +290,13 @@ export default function MyDiary() {
                 </Alert>
             </CDialog>
 
-            <CDialog open={openEdit} onClose={() => setOpenEdit(false)} onOK={handleSubmit}>
+            <CDialog open={openEdit} onClose={() => setOpenEdit(false)} onOK={handleSubmit} title={t("common.new-entry")}>
                 {pickCategories}
-                <CTextField className={commonClasses.mt1} fullWidth variant="outlined" size="small" onClick={(evt) => setAnchorDate(evt.currentTarget)} value={format(values.date, "dd/MM/yyyy")}/>
+                <CTextField className={commonClasses.mt1} fullWidth variant="outlined" size="small" onClick={(evt) => setAnchorDate(evt.currentTarget)} value={format(values.date, "dd/MM/yyyy")} />
                 <CTextField className={commonClasses.mt1} label={t("my-diary.table.label")} onChange={handleChange("label")} value={values.label} fullWidth variant="outlined" size="small" />
                 <CTextField className={commonClasses.mt1} label={t("my-diary.table.amount")} onChange={handleChange("amount")} value={values.amount} fullWidth variant="outlined" size="small" type="number" />
             </CDialog>
-            {xs && <CFab color="primary" onClick={() => setOpenEdit(true)}><Add /></CFab>}
+            {xs && <CFab color="primary" onClick={handleEdit(null)}><Add /></CFab>}
         </>
     );
 }
