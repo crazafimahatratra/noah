@@ -64,7 +64,7 @@ const MenuUser = () => {
         <>
             <Button onClick={handleClick} className={classes.menuButton}>
                 <AccountCircle style={{ marginRight: theme.spacing(1) }} />
-                {!xs && <span>{userContext.user.firstname}</span>}
+                <span>{userContext.user.firstname}</span>
                 <KeyboardArrowDown />
             </Button>
             <Popover anchorEl={anchorEl} open={Boolean(anchorEl)}
@@ -74,7 +74,7 @@ const MenuUser = () => {
                     {xs &&
                         <>
                             <ListItem disabled>
-                                <ListItemIcon><AccountCircle/></ListItemIcon>
+                                <ListItemIcon><AccountCircle /></ListItemIcon>
                                 <ListItemText className={classes.menuItem} primary={userContext.user.firstname} />
                             </ListItem>
                             <Divider />

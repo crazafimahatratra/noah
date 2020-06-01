@@ -1,7 +1,8 @@
 import React from 'react';
 import { Popover, MenuItem, Divider, IconButton } from '@material-ui/core';
-import { Language } from '@material-ui/icons';
+import { Language, KeyboardArrowDown } from '@material-ui/icons';
 import { useTranslation } from 'react-i18next';
+import CButton from './CButton';
 
 const languages = [{value: "en-US", label: "EN"}, {value: "fr-FR", label: "FR"}]
 
@@ -34,9 +35,10 @@ export default function MenuLang(props) {
     }
     return (
         <>
-            <IconButton className={props.className} onClick={handleClick}>
-                <Language/>
-            </IconButton>
+            <CButton className={props.className} onClick={handleClick}>
+                <Language/> {langLabel(i18n.language)}
+                <KeyboardArrowDown />
+            </CButton>
             <Popover 
             open={Boolean(anchorEl)} 
             onClose={() => {setAnchorEl(null)}} anchorEl={anchorEl} PaperProps={{style: {width: width}}}
