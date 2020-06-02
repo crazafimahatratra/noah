@@ -62,7 +62,6 @@ export default function MyDiary() {
         let v = evt.target.value;
         if (name === "amount") {
             v = parseInt(v, 10);
-            if (isNaN(v)) v = 0;
         }
         setValues({ ...values, [name]: v });
     };
@@ -294,7 +293,7 @@ export default function MyDiary() {
                 {pickCategories}
                 <CTextField className={commonClasses.mt1} fullWidth variant="outlined" size="small" onClick={(evt) => setAnchorDate(evt.currentTarget)} value={format(values.date, "dd/MM/yyyy")} />
                 <CTextField className={commonClasses.mt1} label={t("my-diary.table.label")} onChange={handleChange("label")} value={values.label} fullWidth variant="outlined" size="small" />
-                <CTextField className={commonClasses.mt1} label={t("my-diary.table.amount")} onChange={handleChange("amount")} value={values.amount} fullWidth variant="outlined" size="small" type="number" />
+                <CTextField className={commonClasses.mt1} label={t("my-diary.table.amount")} onChange={handleChange("amount")} value={isNaN(values.amount) ? "" : values.amount.toString()} fullWidth variant="outlined" size="small" />
             </CDialog>
             {xs && <CFab color="primary" onClick={handleEdit(null)}><Add /></CFab>}
         </>
