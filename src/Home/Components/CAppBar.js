@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { AppBar, Toolbar, IconButton, makeStyles, Popover, List, Button, useTheme, ListItem, ListItemText, useMediaQuery, Divider, ListItemIcon } from '@material-ui/core';
+import { AppBar, Toolbar, IconButton, makeStyles, Popover, List, Button, ListItem, ListItemText } from '@material-ui/core';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import { Menu, KeyboardArrowDown } from '@material-ui/icons';
 import { UserContext } from '../../AppContext';
@@ -8,6 +8,7 @@ import Session from '../../Auth/Session';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 import MenuLang from '../../Components/MenuLang';
+import useCommonStyles from '../../Theme';
 
 const session = new Session();
 
@@ -22,13 +23,6 @@ const styles = makeStyles((theme) => ({
         borderBottomWidth: 1,
         borderBottomStyle: "solid",
     },
-    menuButton: {
-        color: theme.palette.grey[600],
-        textTransform: "none",
-        "& svg": {
-            color: theme.palette.grey[700],
-        },
-    },
     menuItem: {
         color: theme.palette.text.primary,
     },
@@ -37,10 +31,9 @@ const styles = makeStyles((theme) => ({
 const MenuUser = () => {
     const classes = styles();
     const [anchorEl, setAnchorEl] = React.useState(null);
-    const theme = useTheme();
-    const xs = useMediaQuery(theme.breakpoints.down("xs"));
     const userContext = useContext(UserContext);
     const history = useHistory();
+    const commonClasses = useCommonStyles();
     const [t,] = useTranslation();
 
     /**
@@ -62,8 +55,8 @@ const MenuUser = () => {
     }
     return (
         <>
-            <Button onClick={handleClick} className={classes.menuButton}>
-                <AccountCircle style={{ marginRight: theme.spacing(1) }} />
+            <Button onClick={handleClick} className={commonClasses.menuButton}>
+                <AccountCircle />
                 <span>{userContext.user.firstname}</span>
                 <KeyboardArrowDown />
             </Button>
@@ -71,15 +64,6 @@ const MenuUser = () => {
                 onClose={() => setAnchorEl(null)} anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             >
                 <List>
-                    {xs &&
-                        <>
-                            <ListItem disabled>
-                                <ListItemIcon><AccountCircle /></ListItemIcon>
-                                <ListItemText className={classes.menuItem} primary={userContext.user.firstname} />
-                            </ListItem>
-                            <Divider />
-                        </>
-                    }
                     <ListItem button onClick={handleMyAccount}>
                         <ListItemText className={classes.menuItem} primary={t("appbar.my-account")} />
                     </ListItem>
@@ -98,14 +82,15 @@ const MenuUser = () => {
  */
 export default function CAppBar(props) {
     const classes = styles();
+    const commonClasses = useCommonStyles();
     return (
         <AppBar position="fixed" elevation={0} className={clsx(classes.appBar)}>
             <Toolbar variant="regular">
-                <IconButton onClick={props.onToggleMenu} className={clsx(classes.menuButton)}>
-                    <Menu className={classes.menuButton} />
+                <IconButton onClick={props.onToggleMenu} className={clsx(commonClasses.menuButton)}>
+                    <Menu />
                 </IconButton>
                 <div style={{ flexGrow: 1 }}></div>
-                <MenuLang className={classes.menuButton} />
+                <MenuLang />
                 <MenuUser />
             </Toolbar>
         </AppBar>

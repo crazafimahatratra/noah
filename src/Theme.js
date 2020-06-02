@@ -36,6 +36,14 @@ const commonStyles = makeStyles((theme) => ({
     mt1: {
         marginTop: theme.spacing(1),
     },
+    menuButton: {
+        color: theme.palette.grey[800],
+        textTransform: "none",
+        "& svg:nth-child(1)": {
+            color: theme.palette.grey[700],
+            marginRight: theme.spacing(1),
+        },
+    },
 }));
 
 export default function useCommonStyles() {
