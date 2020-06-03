@@ -6,10 +6,10 @@ import Loader from '../Components/Loader';
 import { Table, TableHead, TableRow, TableBody, TableCell, IconButton } from '@material-ui/core';
 import { CTableCellHeader, CTableRow } from '../Components/CTable';
 import { Cancel, Edit } from '@material-ui/icons';
-import useCommonStyles from '../Theme';
 import CDialog from '../Components/CDialog';
 import { Alert } from '@material-ui/lab';
 import CTextField from '../Components/CTextField';
+import useCommonStyles from '../Theme';
 const http = new Http();
 
 export default function Categories() {
