@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import CTitle from '../Components/CTitle';
-import { Table, TableHead, TableRow, TableBody, TableCell, IconButton, makeStyles, Popover, useTheme, useMediaQuery } from '@material-ui/core';
+import { Table, TableHead, TableRow, TableBody, TableCell, IconButton, makeStyles, Popover, useTheme, useMediaQuery, InputAdornment, Grid } from '@material-ui/core';
 import { Autocomplete, createFilterOptions, Alert } from '@material-ui/lab'
 import { CTableCellHeader, CTableRow } from '../Components/CTable';
 import { Cancel, KeyboardArrowDown, CalendarToday, Add, Edit } from '@material-ui/icons';
@@ -16,6 +16,7 @@ import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 import format from 'date-fns/format';
 import CFab from '../Components/CFab';
+import MenuCurrency from '../Components/MenuCurrency';
 
 let http = new Http();
 
@@ -31,6 +32,9 @@ const styles = makeStyles((theme) => ({
         fontWeight: 700,
         color: "#829299",
     },
+    nopadding: {
+        padding: 0,
+    }
 }))
 
 export default function MyDiary() {
@@ -40,6 +44,7 @@ export default function MyDiary() {
     const [loading, setLoading] = React.useState(false);
     const [rows, setRows] = React.useState([]);
     const filter = createFilterOptions();
+    const [currency, setCurrency] = React.useState("fmg");
 
     const [categories, setCategories] = React.useState([]);
     React.useEffect(() => {
@@ -70,7 +75,8 @@ export default function MyDiary() {
     };
 
     const createOperation = (categoryId) => {
-        let row = { date: values.date, categoryId: categoryId, amount: values.amount, label: values.label };
+        let amount = currency === "fmg" ? values.amount : values.amount * 5;
+        let row = { date: values.date, categoryId: categoryId, amount: amount, label: values.label };
         if (values.id) {
             http.put(`operations/${values.id}`, row).then(response => {
                 let index = rows.findIndex(r => r.id === values.id);
@@ -293,7 +299,19 @@ export default function MyDiary() {
                 {pickCategories}
                 <CTextField className={commonClasses.mt1} fullWidth variant="outlined" size="small" onClick={(evt) => setAnchorDate(evt.currentTarget)} value={format(values.date, "dd/MM/yyyy")} />
                 <CTextField className={commonClasses.mt1} label={t("my-diary.table.label")} onChange={handleChange("label")} value={values.label} fullWidth variant="outlined" size="small" />
-                <CTextField className={commonClasses.mt1} label={t("my-diary.table.amount")} onChange={handleChange("amount")} value={isNaN(values.amount) ? "" : values.amount.toString()} fullWidth variant="outlined" size="small" />
+                <Grid container spacing={1} className={commonClasses.mt1} >
+                    <Grid item xs={12} sm={8}>
+                        <CTextField label={t("my-diary.table.amount")} onChange={handleChange("amount")} value={isNaN(values.amount) ? "" : values.amount.toString()} fullWidth variant="outlined" size="small"
+                            InputProps={{
+                                endAdornment: <InputAdornment><MenuCurrency value={currency} onChange={(evt) => setCurrency(evt.target.value)} /></InputAdornment>,
+                                classes: { adornedEnd: classes.nopadding }
+                            }}
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <CTextField label={currency === "ar" ? "En Fmg" : "En Ariary"} value={currency === "ar" ? values.amount * 5 : values.amount / 5} fullWidth variant="outlined" disabled size="small" />
+                    </Grid>
+                </Grid>
             </CDialog>
             {xs && <CFab color="primary" onClick={handleEdit(null)}><Add /></CFab>}
         </>
