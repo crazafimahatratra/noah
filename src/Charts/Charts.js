@@ -1,7 +1,7 @@
 import React from 'react';
 import CTitle from '../Components/CTitle';
 import { useTranslation } from 'react-i18next';
-import { Grid, makeStyles, Popover, Tooltip as MuiTooltip, useTheme, useMediaQuery } from '@material-ui/core';
+import { Grid, makeStyles, Tooltip as MuiTooltip } from '@material-ui/core';
 import Http from '../Utils/Http';
 import format from 'date-fns/format';
 import add from 'date-fns/add';
@@ -10,10 +10,9 @@ import diff from 'date-fns/differenceInDays'
 import { sumByGroup } from '../Utils/Utils';
 
 import { AreaChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Area, ResponsiveContainer, PieChart, Pie, Cell, Sector } from 'recharts';
-import CButton from '../Components/CButton';
-import { DateRangePicker } from 'react-date-range';
 import { endOfMonth } from 'date-fns';
-import { KeyboardArrowDown, TrendingUp, TrendingDown, TrendingFlat, CalendarToday } from '@material-ui/icons';
+import { TrendingUp, TrendingDown, TrendingFlat } from '@material-ui/icons';
+import CRangePicker from '../Components/CRangePicker';
 const http = new Http();
 
 const dateFormat = "yyyy-MM-dd";
@@ -65,6 +64,11 @@ export default function Charts() {
         endDate: endOfMonth(new Date()),
         key: 'selection'
     })
+    const handleRangeChanged = (r) => {
+        if (r.selection) {
+            setRanges({ ...ranges, startDate: r.selection.startDate, endDate: r.selection.endDate });
+        }
+    };
     const filterDate = (row) => {
         let d1 = format(ranges.startDate, 'yyyyMMdd');
         let d2 = format(new Date(row.date), 'yyyyMMdd');
@@ -153,17 +157,6 @@ export default function Charts() {
         setActiveIndex(index);
     };
 
-    const [anchorCalendar, setAnchorCalendar] = React.useState(null);
-    const handleOpenCalendar = (evt) => {
-        setAnchorCalendar(evt.currentTarget);
-    };
-
-    const handleRangeChanged = (r) => {
-        if (r.selection) {
-            setRanges({ ...ranges, startDate: r.selection.startDate, endDate: r.selection.endDate });
-        }
-    };
-
     const total = calculatedPieData.reduce((a, b) => {
         return { value: a.value + b.value }
     }, { value: 0 });
@@ -175,20 +168,12 @@ export default function Charts() {
     const delta = total.value - previousTotal.amount;
     const p = (previousTotal.amount !== 0 ? (100 * delta / previousTotal.amount) : null);
 
-    const theme = useTheme();
-    const xs = useMediaQuery(theme.breakpoints.down("xs"));
     return (
         <>
             <div className={classes.toolbar}>
                 <CTitle subtitle={t("charts.subtitle")}>{t("charts.title")}</CTitle>
-                <CButton variant="text" onClick={handleOpenCalendar} style={{ marginLeft: "1rem" }}>
-                    {!xs && <>{new Intl.DateTimeFormat('fr').format(ranges.startDate)} - {new Intl.DateTimeFormat('fr').format(ranges.endDate)}<KeyboardArrowDown /></>}
-                    {xs && <><CalendarToday style={{ margin: 0 }} /></>}
-                </CButton>
+                <CRangePicker ranges={ranges} onChange={handleRangeChanged}/>
             </div>
-            <Popover PaperProps={{ style: { height: 400 } }} anchorOrigin={{ horizontal: "left", vertical: "bottom" }} anchorEl={anchorCalendar} open={Boolean(anchorCalendar)} onClose={() => setAnchorCalendar(null)}>
-                <DateRangePicker ranges={[ranges]} onChange={handleRangeChanged} />
-            </Popover>
 
             <Grid container spacing={1}>
                 <Grid item xs={12} md={4}>
