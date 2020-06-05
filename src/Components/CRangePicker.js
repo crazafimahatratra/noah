@@ -27,7 +27,7 @@ export default function CRangePicker(props) {
                 <>{new Intl.DateTimeFormat('fr').format(props.ranges?.startDate)} - {new Intl.DateTimeFormat('fr').format(props.ranges?.endDate)}<KeyboardArrowDown /></>
             </CButton>
             <Popover PaperProps={{ style: { height: 400 } }} anchorOrigin={{ horizontal: "left", vertical: "bottom" }} anchorEl={anchorCalendar} open={Boolean(anchorCalendar)} onClose={() => setAnchorCalendar(null)}>
-                <DateRangePicker ranges={[props.ranges]} onChange={handleRangeChanged} />
+                <DateRangePicker ranges={[props.ranges ?? {}]} onChange={handleRangeChanged} />
             </Popover>
         </>
     )

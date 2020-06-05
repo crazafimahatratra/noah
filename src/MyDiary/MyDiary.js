@@ -4,19 +4,20 @@ import CTitle from '../Components/CTitle';
 import { Table, TableHead, TableRow, TableBody, TableCell, IconButton, makeStyles, Popover, useTheme, useMediaQuery, InputAdornment, Grid } from '@material-ui/core';
 import { Autocomplete, createFilterOptions, Alert } from '@material-ui/lab'
 import { CTableCellHeader, CTableRow } from '../Components/CTable';
-import { Cancel, KeyboardArrowDown, CalendarToday, Add, Edit } from '@material-ui/icons';
+import { Cancel, Add, Edit } from '@material-ui/icons';
 import CTextField from '../Components/CTextField';
 import CButton from '../Components/CButton';
 import Http from '../Utils/Http';
 import Loader from '../Components/Loader';
 import CDialog from '../Components/CDialog';
-import { DateRangePicker, Calendar } from 'react-date-range';
+import { Calendar } from 'react-date-range';
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 import format from 'date-fns/format';
 import CFab from '../Components/CFab';
 import MenuCurrency from '../Components/MenuCurrency';
 import useCommonStyles from '../Theme';
+import CRangePicker from '../Components/CRangePicker';
 
 let http = new Http();
 
@@ -162,17 +163,11 @@ export default function MyDiary() {
                 setLoadingSubmit(false);
             })
     }
-
-    const [anchorCalendar, setAnchorCalendar] = React.useState(null);
-    const handleOpenCalendar = (evt) => {
-        setAnchorCalendar(evt.currentTarget);
-    };
     const [ranges, setRanges] = React.useState({
         startDate: new Date(),
         endDate: new Date(),
         key: 'selection'
     })
-
     const handleRangeChanged = (r) => {
         if (r.selection) {
             setRanges({ ...ranges, startDate: r.selection.startDate, endDate: r.selection.endDate });
@@ -220,22 +215,15 @@ export default function MyDiary() {
                 <CTitle subtitle={t("my-diary.subtitle")}>{t("my-diary.title")}</CTitle>
                 <div style={{ flexGrow: 1 }}></div>
                 {!xs && <CButton onClick={handleEdit(null)} color="primary" style={{ marginRight: "1rem" }} variant="outlined"><Add /> {t("common.new-entry")}</CButton>}
-                <CButton variant="text" onClick={handleOpenCalendar}>
-                    {!xs && <>{new Intl.DateTimeFormat('fr').format(ranges.startDate)} - {new Intl.DateTimeFormat('fr').format(ranges.endDate)}<KeyboardArrowDown /></>}
-                    {xs && <><CalendarToday style={{ margin: 0 }} /></>}
-                </CButton>
+                <CRangePicker ranges={ranges} onChange={handleRangeChanged}/>
                 {!xs && <><div style={{ flexGrow: 1 }}></div><h1 className={classes.total}>{new Intl.NumberFormat('fr').format(sum.amount)} Fmg</h1></>}
             </div>
 
             {xs && <><h1 className={classes.total}>{new Intl.NumberFormat('fr').format(sum.amount)} Fmg</h1></>}
 
-            <Popover PaperProps={{ style: { height: 400 } }} anchorOrigin={{ horizontal: "left", vertical: "bottom" }} anchorEl={anchorCalendar} open={Boolean(anchorCalendar)} onClose={() => setAnchorCalendar(null)}>
-                <DateRangePicker ranges={[ranges]} onChange={handleRangeChanged} />
-            </Popover>
             <Popover PaperProps={{ style: { height: 400 } }} anchorOrigin={{ horizontal: "left", vertical: "bottom" }} anchorEl={anchorDate} open={Boolean(anchorDate)} onClose={() => setAnchorDate(null)}>
                 <Calendar date={values.date} onChange={item => { setValues({ ...values, date: item }); setAnchorDate(null); }} />
             </Popover>
-
 
             {loading && <Loader />}
             {!loading &&
