@@ -113,6 +113,10 @@
     },
     "title": "Mes Produits"
   },
+  "search": {
+    "subtitle": "Résultats de la recherche de",
+    "title": "Recherche"
+  },
   "settings": {
     "departments": {
       "confirm-delete": "Voulez-vous vraiment supprimer le département <1>{{name}}</1> ?",

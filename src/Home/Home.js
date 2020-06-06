@@ -8,6 +8,7 @@ import Charts from '../Charts/Charts';
 import Categories from '../Categories/Categories';
 import CDrawer from './Components/CDrawer';
 import CAppBar from './Components/CAppBar';
+import SearchResult from './SearchResult';
 
 let http = new Http();
 
@@ -62,6 +63,9 @@ export default function Home() {
                         </Route>
                         <Route path="/charts">
                             <Charts/>
+                        </Route>
+                        <Route path="/search/:token">
+                            <SearchResult/>
                         </Route>
                         <Route path="/">
                             <MyDiary />

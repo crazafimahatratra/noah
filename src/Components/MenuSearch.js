@@ -32,7 +32,8 @@ export default function MenuSearch() {
      */
     const handleSearch = (evt) => {
         evt.preventDefault();
-        history.push("/search");
+        localStorage.setItem('search-pattern', value);
+        history.push(`/search/${Math.ceil(Math.random() * 1000)}`);
     }
     return (
         <>
