@@ -215,7 +215,7 @@ export default function MyDiary() {
                 <CTitle subtitle={t("my-diary.subtitle")}>{t("my-diary.title")}</CTitle>
                 <div style={{ flexGrow: 1 }}></div>
                 {!xs && <CButton onClick={handleEdit(null)} color="primary" style={{ marginRight: "1rem" }} variant="outlined"><Add /> {t("common.new-entry")}</CButton>}
-                <CRangePicker ranges={ranges} onChange={handleRangeChanged}/>
+                <CRangePicker ranges={ranges} onChange={handleRangeChanged} />
                 {!xs && <><div style={{ flexGrow: 1 }}></div><h1 className={classes.total}>{new Intl.NumberFormat('fr').format(sum.amount)} Fmg</h1></>}
             </div>
 

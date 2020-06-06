@@ -1,7 +1,7 @@
 import React from 'react';
-import { Popover } from '@material-ui/core';
+import { Popover, ButtonGroup } from '@material-ui/core';
 import { DateRangePicker } from 'react-date-range';
-import { KeyboardArrowDown, CalendarToday } from '@material-ui/icons';
+import { KeyboardArrowDown, CalendarToday, KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons';
 import CButton from './CButton';
 import dateAdd from 'date-fns/add';
 import dateFormat from 'date-fns/format';
@@ -41,8 +41,9 @@ const humanize = (date1, date2) => {
 /**
  * @typedef CRangePickerProperties
  * @type {object}
- * @property {{startDate: Date, endDate: Date}} ranges
+ * @property {{startDate: Date, endDate: Date, key: string}} ranges
  * @property {function} onChange
+ * @property {React.CSSProperties} style
  * 
  * @param {CRangePickerProperties} props 
  */
@@ -56,12 +57,27 @@ export default function CRangePicker(props) {
         if (props.onChange) props.onChange(r);
     };
 
+    const handleClickDelta = (delta) => () => {
+        let ranges = props.ranges;
+        if(!ranges) return;
+        let d = dateAdd(props.ranges.startDate, {days: delta});
+        if(props.onChange) {
+            props.onChange({[props.ranges.key]: {...props.ranges, startDate: d, endDate: d}});
+        }
+    }
+
+    const disableSteps = dateFormat(props.ranges?.startDate, format) !== dateFormat(props.ranges?.endDate, format);
+
     return (
         <>
-            <CButton variant="outlined" onClick={handleOpenCalendar} style={{ marginLeft: "1rem" }}>
-                <CalendarToday/>
-                {humanize(props.ranges?.startDate, props.ranges?.endDate)}<KeyboardArrowDown style={{marginRight: 0}} />
-            </CButton>
+            <ButtonGroup style={props.style}>
+                <CButton disabled={disableSteps} onClick={handleClickDelta(-1)} variant="outlined" style={{paddingRight: 8, paddingLeft: 8}}><KeyboardArrowLeft style={{margin: 0}}/></CButton>
+                <CButton variant="outlined" onClick={handleOpenCalendar}>
+                    <CalendarToday/>
+                    {humanize(props.ranges?.startDate, props.ranges?.endDate)}<KeyboardArrowDown style={{marginRight: 0}} />
+                </CButton>
+                <CButton disabled={disableSteps} onClick={handleClickDelta(+1)} variant="outlined" style={{paddingRight: 8, paddingLeft: 8}}><KeyboardArrowRight style={{margin: 0}}/></CButton>
+            </ButtonGroup>
             <Popover PaperProps={{ style: { height: 400 } }} anchorOrigin={{ horizontal: "left", vertical: "bottom" }} anchorEl={anchorCalendar} open={Boolean(anchorCalendar)} onClose={() => setAnchorCalendar(null)}>
                 <DateRangePicker ranges={[props.ranges ?? {}]} onChange={handleRangeChanged} />
             </Popover>

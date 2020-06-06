@@ -172,7 +172,7 @@ export default function Charts() {
         <>
             <div className={classes.toolbar}>
                 <CTitle subtitle={t("charts.subtitle")}>{t("charts.title")}</CTitle>
-                <CRangePicker ranges={ranges} onChange={handleRangeChanged}/>
+                <CRangePicker style={{ marginLeft: "1rem" }} ranges={ranges} onChange={handleRangeChanged} />
             </div>
 
             <Grid container spacing={1}>
