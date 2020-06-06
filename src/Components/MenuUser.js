@@ -11,16 +11,6 @@ import Session from '../Auth/Session';
 const session = new Session();
 
 const styles = makeStyles((theme) => ({
-    appBar: {
-        background: 'white',
-        transition: theme.transitions.create(['margin', 'width'], {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.leavingScreen,
-        }),
-        borderBottomColor: theme.palette.grey[200],
-        borderBottomWidth: 1,
-        borderBottomStyle: "solid",
-    },
     menuItem: {
         color: theme.palette.text.primary,
     },

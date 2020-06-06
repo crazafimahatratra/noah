@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import MenuLang from '../../Components/MenuLang';
 import MenuUser from '../../Components/MenuUser';
 import useCommonStyles from '../../Theme';
+import MenuSearch from '../../Components/MenuSearch';
 
 const styles = makeStyles((theme) => ({
     appBar: {
@@ -33,6 +34,7 @@ export default function CAppBar(props) {
                     <Menu />
                 </IconButton>
                 <div style={{ flexGrow: 1 }}></div>
+                <MenuSearch/>
                 <MenuLang />
                 <MenuUser />
             </Toolbar>
