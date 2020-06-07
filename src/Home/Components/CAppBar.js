@@ -1,16 +1,11 @@
-import React, { useContext } from 'react';
-import { AppBar, Toolbar, IconButton, makeStyles, Popover, List, Button, ListItem, ListItemText } from '@material-ui/core';
-import AccountCircle from '@material-ui/icons/AccountCircle';
-import { Menu, KeyboardArrowDown } from '@material-ui/icons';
-import { UserContext } from '../../AppContext';
-import { useHistory } from 'react-router-dom';
-import Session from '../../Auth/Session';
+import React from 'react';
+import { AppBar, Toolbar, IconButton, makeStyles } from '@material-ui/core';
+import { Menu } from '@material-ui/icons';
 import clsx from 'clsx';
-import { useTranslation } from 'react-i18next';
 import MenuLang from '../../Components/MenuLang';
+import MenuUser from '../../Components/MenuUser';
 import useCommonStyles from '../../Theme';
-
-const session = new Session();
+import MenuSearch from '../../Components/MenuSearch';
 
 const styles = makeStyles((theme) => ({
     appBar: {
@@ -23,58 +18,7 @@ const styles = makeStyles((theme) => ({
         borderBottomWidth: 1,
         borderBottomStyle: "solid",
     },
-    menuItem: {
-        color: theme.palette.text.primary,
-    },
 }));
-
-const MenuUser = () => {
-    const classes = styles();
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const userContext = useContext(UserContext);
-    const history = useHistory();
-    const commonClasses = useCommonStyles();
-    const [t,] = useTranslation();
-
-    /**
-     * 
-     * @param {Event} evt 
-     */
-    const handleClick = (evt) => {
-        setAnchorEl(evt.target);
-    };
-
-    const handleDisconnect = () => {
-        session.clear();
-        history.replace("/auth");
-    };
-
-    const handleMyAccount = () => {
-        setAnchorEl(null);
-        history.push("/my-account");
-    }
-    return (
-        <>
-            <Button onClick={handleClick} className={commonClasses.menuButton}>
-                <AccountCircle />
-                <span>{userContext.user.firstname}</span>
-                <KeyboardArrowDown />
-            </Button>
-            <Popover anchorEl={anchorEl} open={Boolean(anchorEl)}
-                onClose={() => setAnchorEl(null)} anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-            >
-                <List>
-                    <ListItem button onClick={handleMyAccount}>
-                        <ListItemText className={classes.menuItem} primary={t("appbar.my-account")} />
-                    </ListItem>
-                    <ListItem button onClick={handleDisconnect}>
-                        <ListItemText className={classes.menuItem} primary={t("appbar.logout")} />
-                    </ListItem>
-                </List>
-            </Popover>
-        </>
-    );
-};
 
 /**
  * 
@@ -90,6 +34,7 @@ export default function CAppBar(props) {
                     <Menu />
                 </IconButton>
                 <div style={{ flexGrow: 1 }}></div>
+                <MenuSearch/>
                 <MenuLang />
                 <MenuUser />
             </Toolbar>

@@ -15,9 +15,9 @@ const styles = makeStyles((theme) => ({
         }
     },
     subtitle: {
-        lineHeight: 0,
+        lineHeight: 1,
         color: "#829299",
-        marginTop: theme.spacing(1),
+        marginTop: 0,
         fontWeight: 400,
         marginBottom: theme.spacing(2)
     },
