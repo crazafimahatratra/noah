@@ -77,7 +77,7 @@ export default function Charts() {
     }
     const filterPreviousDate = (row) => {
         let end = add(ranges.startDate, { days: -1 });
-        let delta = diff(ranges.startDate, ranges.endDate) - 1;
+        let delta = diff(ranges.startDate, ranges.endDate);
         let start = add(end, { days: delta });
 
         let d1 = format(start, 'yyyyMMdd');
