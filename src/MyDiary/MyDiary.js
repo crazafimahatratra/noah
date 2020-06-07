@@ -33,9 +33,6 @@ const styles = makeStyles((theme) => ({
         fontWeight: 700,
         color: "#829299",
     },
-    nopadding: {
-        padding: 0,
-    }
 }));
 
 /**
@@ -64,7 +61,7 @@ function CategoryPicker(props) {
         let p = { label: label, color: "" };
         categories.push(p);
         setCategories([...categories]);
-        if(props.onSelect) props.onSelect(p);
+        if (props.onSelect) props.onSelect(p);
     };
 
     const handleSelect = (_evt, value) => {
@@ -77,7 +74,7 @@ function CategoryPicker(props) {
             createCategory(value, 0);
             return;
         }
-        if(props.onSelect) props.onSelect(value);
+        if (props.onSelect) props.onSelect(value);
     }
 
     return (<Autocomplete options={categories} clearOnBlur freeSolo
@@ -104,6 +101,62 @@ function CategoryPicker(props) {
     />)
 }
 
+/**
+ * @typedef OperationEditorProperties
+ * @type {object}
+ * @property {boolean} open
+ * @property {function} onClose
+ * @property {function} onOK
+ * @property {{category: object, date: Date, label: string, amount: number}} values
+ * @property {function} onValueChanged
+ * @property {"fmg"|"ar"} currency
+ * @property {function} onCurrencyChanged
+ * 
+ * @param {OperationEditorProperties} props 
+ */
+function OperationEditor(props) {
+    const [t,] = useTranslation();
+    const commonClasses = useCommonStyles();
+    const [anchorDate, setAnchorDate] = React.useState(null);
+    const handleCurrencyChanged = (evt) => {
+        if (props.onCurrencyChanged) props.onCurrencyChanged(evt.target.value);
+    }
+    const handleCategorySelected = (c) => {
+        if (props.onValueChanged) props.onValueChanged("category", c);
+    }
+    const handleChange = (name) => (evt) => {
+        if (props.onValueChanged) props.onValueChanged(name, evt.target.value);
+    }
+    const handleDateChanged = (name, date) => {
+        if (props.onValueChanged) props.onValueChanged(name, date);
+    }
+
+    return (
+        <>
+            <CDialog open={props.open} onClose={props.onClose} onOK={props.onOK} title={t("common.new-entry")}>
+                <CategoryPicker value={props.values.category} onSelect={handleCategorySelected} />
+                <CTextField className={commonClasses.mt1} fullWidth variant="outlined" size="small" onClick={(evt) => setAnchorDate(evt.currentTarget)} value={format(props.values.date, "dd/MM/yyyy")} />
+                <CTextField className={commonClasses.mt1} label={t("my-diary.table.label")} onChange={handleChange("label")} value={props.values.label} fullWidth variant="outlined" size="small" />
+                <Grid container spacing={1} className={commonClasses.mt1} >
+                    <Grid item xs={12} sm={8}>
+                        <CTextField label={t("my-diary.table.amount")} onChange={handleChange("amount")} value={isNaN(props.values.amount) ? "" : props.values.amount.toString()} fullWidth variant="outlined" size="small"
+                            InputProps={{
+                                endAdornment: <InputAdornment><MenuCurrency value={props.currency} onChange={handleCurrencyChanged} /></InputAdornment>,
+                                classes: { adornedEnd: commonClasses.nopadding }
+                            }}
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <CTextField label={props.currency === "ar" ? "En Fmg" : "En Ariary"} value={props.currency === "ar" ? props.values.amount * 5 : props.values.amount / 5} fullWidth variant="outlined" disabled size="small" />
+                    </Grid>
+                </Grid>
+                <Popover PaperProps={{ style: { height: 400 } }} anchorOrigin={{ horizontal: "left", vertical: "bottom" }} anchorEl={anchorDate} open={Boolean(anchorDate)} onClose={() => setAnchorDate(null)}>
+                    <Calendar date={props.values.date} onChange={item => { handleDateChanged("date", item); setAnchorDate(null); }} />
+                </Popover>
+            </CDialog>
+        </>)
+}
+
 export function MyDiary() {
     const classes = styles();
     const commonClasses = useCommonStyles();
@@ -126,8 +179,7 @@ export function MyDiary() {
         date: new Date(), category: { label: "", color: "" }, amount: 0, label: ""
     });
 
-    const handleChange = (name) => (evt) => {
-        let v = evt.target.value;
+    const handleChange = (name, v) => {
         if (name === "amount") {
             v = parseInt(v, 10);
         }
@@ -229,9 +281,6 @@ export function MyDiary() {
     const theme = useTheme();
     const xs = useMediaQuery(theme.breakpoints.down("xs"));
 
-    const handleCategorySelected = (c) => {
-        setValues({...values, category: c});
-    }
     return (
         <>
             <div className={classes.toolbar}>
@@ -306,24 +355,11 @@ export function MyDiary() {
                 </Alert>
             </CDialog>
 
-            <CDialog open={openEdit} onClose={() => setOpenEdit(false)} onOK={handleSubmit} title={t("common.new-entry")}>
-                <CategoryPicker value={values.category} onSelect={handleCategorySelected}/>
-                <CTextField className={commonClasses.mt1} fullWidth variant="outlined" size="small" onClick={(evt) => setAnchorDate(evt.currentTarget)} value={format(values.date, "dd/MM/yyyy")} />
-                <CTextField className={commonClasses.mt1} label={t("my-diary.table.label")} onChange={handleChange("label")} value={values.label} fullWidth variant="outlined" size="small" />
-                <Grid container spacing={1} className={commonClasses.mt1} >
-                    <Grid item xs={12} sm={8}>
-                        <CTextField label={t("my-diary.table.amount")} onChange={handleChange("amount")} value={isNaN(values.amount) ? "" : values.amount.toString()} fullWidth variant="outlined" size="small"
-                            InputProps={{
-                                endAdornment: <InputAdornment><MenuCurrency value={currency} onChange={(evt) => setCurrency(evt.target.value)} /></InputAdornment>,
-                                classes: { adornedEnd: classes.nopadding }
-                            }}
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={4}>
-                        <CTextField label={currency === "ar" ? "En Fmg" : "En Ariary"} value={currency === "ar" ? values.amount * 5 : values.amount / 5} fullWidth variant="outlined" disabled size="small" />
-                    </Grid>
-                </Grid>
-            </CDialog>
+            <OperationEditor
+                open={openEdit} onClose={() => setOpenEdit(false)} onOK={handleSubmit}
+                values={values} onValueChanged={handleChange}
+                currency={currency} onCurrencyChanged={(cur) => setCurrency(cur)}
+            />
             {xs && <CFab color="primary" onClick={handleEdit(null)}><Add /></CFab>}
         </>
     );
