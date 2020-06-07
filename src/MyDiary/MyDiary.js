@@ -38,7 +38,7 @@ const styles = makeStyles((theme) => ({
     }
 }))
 
-export default function MyDiary() {
+export function MyDiary() {
     const classes = styles();
     const commonClasses = useCommonStyles();
     const [t,] = useTranslation();
