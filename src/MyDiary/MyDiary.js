@@ -36,7 +36,73 @@ const styles = makeStyles((theme) => ({
     nopadding: {
         padding: 0,
     }
-}))
+}));
+
+/**
+ * @typedef CategoryPickerProperties
+ * @type {object}
+ * @property {object} value
+ * @property {function} onSelect
+ * 
+ * @param {CategoryPickerProperties} props 
+ */
+function CategoryPicker(props) {
+    const [t,] = useTranslation();
+    const [categories, setCategories] = React.useState([]);
+    const filter = createFilterOptions();
+
+    React.useEffect(() => {
+        let r1 = http.get('categories');
+        Promise.all([r1])
+            .then(([response1]) => {
+                setCategories(response1.data);
+            })
+            .catch(console.error)
+    }, []);
+
+    const createCategory = (label) => {
+        let p = { label: label, color: "" };
+        categories.push(p);
+        setCategories([...categories]);
+        if(props.onSelect) props.onSelect(p);
+    };
+
+    const handleSelect = (_evt, value) => {
+        if (!value) return;
+        if (value.inputValue) {
+            createCategory(value.inputValue, value.color);
+            return;
+        }
+        if (typeof value === "string") {
+            createCategory(value, 0);
+            return;
+        }
+        if(props.onSelect) props.onSelect(value);
+    }
+
+    return (<Autocomplete options={categories} clearOnBlur freeSolo
+        value={props.value}
+        getOptionLabel={(option) => {
+            if (typeof option === "string") return option;
+            return option.label;
+        }}
+        renderInput={(params) => <CTextField {...params} label={t("my-diary.table.category")} variant="outlined" size="small" fullWidth />}
+        onChange={handleSelect}
+        filterOptions={(options, params) => {
+            const filtered = filter(options, params);
+            // Suggest the creation of a new value
+            if (params.inputValue !== '') {
+                filtered.push({
+                    inputValue: params.inputValue,
+                    label: `Add "${params.inputValue}"`,
+                    pu: 0
+                });
+            }
+
+            return filtered;
+        }}
+    />)
+}
 
 export function MyDiary() {
     const classes = styles();
@@ -44,17 +110,13 @@ export function MyDiary() {
     const [t,] = useTranslation();
     const [loading, setLoading] = React.useState(false);
     const [rows, setRows] = React.useState([]);
-    const filter = createFilterOptions();
     const [currency, setCurrency] = React.useState("fmg");
 
-    const [categories, setCategories] = React.useState([]);
     React.useEffect(() => {
         setLoading(true);
-        let r1 = http.get('categories');
         let r2 = http.get('operations');
-        Promise.all([r1, r2])
-            .then(([response1, response2]) => {
-                setCategories(response1.data);
+        Promise.all([r2])
+            .then(([response2]) => {
                 setRows(response2.data);
             })
             .catch(console.error)
@@ -112,26 +174,6 @@ export function MyDiary() {
         setOpenEdit(false);
     };
 
-    const createCategory = (label) => {
-        let p = { label: label, color: "" };
-        categories.push(p);
-        setCategories([...categories]);
-        setValues({ ...values, category: p });
-    };
-
-    const handleSelect = (_evt, value) => {
-        if (!value) return;
-        if (value.inputValue) {
-            createCategory(value.inputValue, value.color);
-            return;
-        }
-        if (typeof value === "string") {
-            createCategory(value, 0);
-            return;
-        }
-        setValues({ ...values, category: value });
-    }
-
     const [openConfirm, setOpenConfirm] = React.useState(false);
     const [currentRow, setCurrentRow] = React.useState(null);
     const [loadingSubmit, setLoadingSubmit] = React.useState(false);
@@ -187,28 +229,9 @@ export function MyDiary() {
     const theme = useTheme();
     const xs = useMediaQuery(theme.breakpoints.down("xs"));
 
-    const pickCategories = <Autocomplete options={categories} clearOnBlur freeSolo
-        value={values.category}
-        getOptionLabel={(option) => {
-            if (typeof option === "string") return option;
-            return option.label;
-        }}
-        renderInput={(params) => <CTextField {...params} label={t("my-diary.table.category")} variant="outlined" size="small" fullWidth />}
-        onChange={handleSelect}
-        filterOptions={(options, params) => {
-            const filtered = filter(options, params);
-            // Suggest the creation of a new value
-            if (params.inputValue !== '') {
-                filtered.push({
-                    inputValue: params.inputValue,
-                    label: `Add "${params.inputValue}"`,
-                    pu: 0
-                });
-            }
-
-            return filtered;
-        }}
-    />
+    const handleCategorySelected = (c) => {
+        setValues({...values, category: c});
+    }
     return (
         <>
             <div className={classes.toolbar}>
@@ -284,7 +307,7 @@ export function MyDiary() {
             </CDialog>
 
             <CDialog open={openEdit} onClose={() => setOpenEdit(false)} onOK={handleSubmit} title={t("common.new-entry")}>
-                {pickCategories}
+                <CategoryPicker value={values.category} onSelect={handleCategorySelected}/>
                 <CTextField className={commonClasses.mt1} fullWidth variant="outlined" size="small" onClick={(evt) => setAnchorDate(evt.currentTarget)} value={format(values.date, "dd/MM/yyyy")} />
                 <CTextField className={commonClasses.mt1} label={t("my-diary.table.label")} onChange={handleChange("label")} value={values.label} fullWidth variant="outlined" size="small" />
                 <Grid container spacing={1} className={commonClasses.mt1} >
