@@ -33,28 +33,143 @@ const styles = makeStyles((theme) => ({
         fontWeight: 700,
         color: "#829299",
     },
-    nopadding: {
-        padding: 0,
-    }
-}))
+}));
 
-export default function MyDiary() {
+/**
+ * @typedef CategoryPickerProperties
+ * @type {object}
+ * @property {object} value
+ * @property {function} onSelect
+ * 
+ * @param {CategoryPickerProperties} props 
+ */
+function CategoryPicker(props) {
+    const [t,] = useTranslation();
+    const [categories, setCategories] = React.useState([]);
+    const filter = createFilterOptions();
+
+    React.useEffect(() => {
+        let r1 = http.get('categories');
+        Promise.all([r1])
+            .then(([response1]) => {
+                setCategories(response1.data);
+            })
+            .catch(console.error)
+    }, []);
+
+    const createCategory = (label) => {
+        let p = { label: label, color: "" };
+        categories.push(p);
+        setCategories([...categories]);
+        if (props.onSelect) props.onSelect(p);
+    };
+
+    const handleSelect = (_evt, value) => {
+        if (!value) return;
+        if (value.inputValue) {
+            createCategory(value.inputValue, value.color);
+            return;
+        }
+        if (typeof value === "string") {
+            createCategory(value, 0);
+            return;
+        }
+        if (props.onSelect) props.onSelect(value);
+    }
+
+    return (<Autocomplete options={categories} clearOnBlur freeSolo
+        value={props.value}
+        getOptionLabel={(option) => {
+            if (typeof option === "string") return option;
+            return option.label;
+        }}
+        renderInput={(params) => <CTextField {...params} label={t("my-diary.table.category")} variant="outlined" size="small" fullWidth />}
+        onChange={handleSelect}
+        filterOptions={(options, params) => {
+            const filtered = filter(options, params);
+            // Suggest the creation of a new value
+            if (params.inputValue !== '') {
+                filtered.push({
+                    inputValue: params.inputValue,
+                    label: `Add "${params.inputValue}"`,
+                    pu: 0
+                });
+            }
+
+            return filtered;
+        }}
+    />)
+}
+
+/**
+ * @typedef OperationEditorProperties
+ * @type {object}
+ * @property {boolean} open
+ * @property {function} onClose
+ * @property {function} onOK
+ * @property {{category: object, date: Date, label: string, amount: number}} values
+ * @property {function} onValueChanged
+ * @property {"fmg"|"ar"} currency
+ * @property {function} onCurrencyChanged
+ * 
+ * @param {OperationEditorProperties} props 
+ */
+export function OperationEditor(props) {
+    const [t,] = useTranslation();
+    const commonClasses = useCommonStyles();
+    const [anchorDate, setAnchorDate] = React.useState(null);
+    const handleCurrencyChanged = (evt) => {
+        if (props.onCurrencyChanged) props.onCurrencyChanged(evt.target.value);
+    }
+    const handleCategorySelected = (c) => {
+        if (props.onValueChanged) props.onValueChanged("category", c);
+    }
+    const handleChange = (name) => (evt) => {
+        if (props.onValueChanged) props.onValueChanged(name, evt.target.value);
+    }
+    const handleDateChanged = (name, date) => {
+        if (props.onValueChanged) props.onValueChanged(name, date);
+    }
+
+    return (
+        <>
+            <CDialog open={props.open} onClose={props.onClose} onOK={props.onOK} title={t("common.new-entry")}>
+                <CategoryPicker value={props.values?.category} onSelect={handleCategorySelected} />
+                <CTextField className={commonClasses.mt1} fullWidth variant="outlined" size="small" onClick={(evt) => setAnchorDate(evt.currentTarget)} value={format(props.values?.date ?? new Date(), "dd/MM/yyyy")} />
+                <CTextField className={commonClasses.mt1} label={t("my-diary.table.label")} onChange={handleChange("label")} value={props.values?.label} fullWidth variant="outlined" size="small" />
+                <Grid container spacing={1} className={commonClasses.mt1} >
+                    <Grid item xs={12} sm={8}>
+                        <CTextField label={t("my-diary.table.amount")} onChange={handleChange("amount")} value={isNaN(props.values?.amount) ? "" : props.values?.amount.toString()} fullWidth variant="outlined" size="small"
+                            InputProps={{
+                                endAdornment: <InputAdornment><MenuCurrency value={props.currency} onChange={handleCurrencyChanged} /></InputAdornment>,
+                                classes: { adornedEnd: commonClasses.nopadding }
+                            }}
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <CTextField label={props.currency === "ar" ? "En Fmg" : "En Ariary"} value={props.currency === "ar" ? props.values?.amount * 5 : props.values?.amount / 5} fullWidth variant="outlined" disabled size="small" />
+                    </Grid>
+                </Grid>
+                <Popover PaperProps={{ style: { height: 400 } }} anchorOrigin={{ horizontal: "left", vertical: "bottom" }} anchorEl={anchorDate} open={Boolean(anchorDate)} onClose={() => setAnchorDate(null)}>
+                    <Calendar date={props.values?.date} onChange={item => { handleDateChanged("date", item); setAnchorDate(null); }} />
+                </Popover>
+            </CDialog>
+        </>)
+}
+
+export function MyDiary() {
     const classes = styles();
     const commonClasses = useCommonStyles();
     const [t,] = useTranslation();
     const [loading, setLoading] = React.useState(false);
     const [rows, setRows] = React.useState([]);
-    const filter = createFilterOptions();
     const [currency, setCurrency] = React.useState("fmg");
 
-    const [categories, setCategories] = React.useState([]);
     React.useEffect(() => {
         setLoading(true);
-        let r1 = http.get('categories');
         let r2 = http.get('operations');
-        Promise.all([r1, r2])
-            .then(([response1, response2]) => {
-                setCategories(response1.data);
+        Promise.all([r2])
+            .then(([response2]) => {
                 setRows(response2.data);
             })
             .catch(console.error)
@@ -64,8 +179,7 @@ export default function MyDiary() {
         date: new Date(), category: { label: "", color: "" }, amount: 0, label: ""
     });
 
-    const handleChange = (name) => (evt) => {
-        let v = evt.target.value;
+    const handleChange = (name, v) => {
         if (name === "amount") {
             v = parseInt(v, 10);
         }
@@ -111,26 +225,6 @@ export default function MyDiary() {
         handleCancel();
         setOpenEdit(false);
     };
-
-    const createCategory = (label) => {
-        let p = { label: label, color: "" };
-        categories.push(p);
-        setCategories([...categories]);
-        setValues({ ...values, category: p });
-    };
-
-    const handleSelect = (_evt, value) => {
-        if (!value) return;
-        if (value.inputValue) {
-            createCategory(value.inputValue, value.color);
-            return;
-        }
-        if (typeof value === "string") {
-            createCategory(value, 0);
-            return;
-        }
-        setValues({ ...values, category: value });
-    }
 
     const [openConfirm, setOpenConfirm] = React.useState(false);
     const [currentRow, setCurrentRow] = React.useState(null);
@@ -187,28 +281,6 @@ export default function MyDiary() {
     const theme = useTheme();
     const xs = useMediaQuery(theme.breakpoints.down("xs"));
 
-    const pickCategories = <Autocomplete options={categories} clearOnBlur freeSolo
-        value={values.category}
-        getOptionLabel={(option) => {
-            if (typeof option === "string") return option;
-            return option.label;
-        }}
-        renderInput={(params) => <CTextField {...params} label={t("my-diary.table.category")} variant="outlined" size="small" fullWidth />}
-        onChange={handleSelect}
-        filterOptions={(options, params) => {
-            const filtered = filter(options, params);
-            // Suggest the creation of a new value
-            if (params.inputValue !== '') {
-                filtered.push({
-                    inputValue: params.inputValue,
-                    label: `Add "${params.inputValue}"`,
-                    pu: 0
-                });
-            }
-
-            return filtered;
-        }}
-    />
     return (
         <>
             <div className={classes.toolbar}>
@@ -283,24 +355,11 @@ export default function MyDiary() {
                 </Alert>
             </CDialog>
 
-            <CDialog open={openEdit} onClose={() => setOpenEdit(false)} onOK={handleSubmit} title={t("common.new-entry")}>
-                {pickCategories}
-                <CTextField className={commonClasses.mt1} fullWidth variant="outlined" size="small" onClick={(evt) => setAnchorDate(evt.currentTarget)} value={format(values.date, "dd/MM/yyyy")} />
-                <CTextField className={commonClasses.mt1} label={t("my-diary.table.label")} onChange={handleChange("label")} value={values.label} fullWidth variant="outlined" size="small" />
-                <Grid container spacing={1} className={commonClasses.mt1} >
-                    <Grid item xs={12} sm={8}>
-                        <CTextField label={t("my-diary.table.amount")} onChange={handleChange("amount")} value={isNaN(values.amount) ? "" : values.amount.toString()} fullWidth variant="outlined" size="small"
-                            InputProps={{
-                                endAdornment: <InputAdornment><MenuCurrency value={currency} onChange={(evt) => setCurrency(evt.target.value)} /></InputAdornment>,
-                                classes: { adornedEnd: classes.nopadding }
-                            }}
-                        />
-                    </Grid>
-                    <Grid item xs={12} sm={4}>
-                        <CTextField label={currency === "ar" ? "En Fmg" : "En Ariary"} value={currency === "ar" ? values.amount * 5 : values.amount / 5} fullWidth variant="outlined" disabled size="small" />
-                    </Grid>
-                </Grid>
-            </CDialog>
+            <OperationEditor
+                open={openEdit} onClose={() => setOpenEdit(false)} onOK={handleSubmit}
+                values={values} onValueChanged={handleChange}
+                currency={currency} onCurrencyChanged={(cur) => setCurrency(cur)}
+            />
             {xs && <CFab color="primary" onClick={handleEdit(null)}><Add /></CFab>}
         </>
     );

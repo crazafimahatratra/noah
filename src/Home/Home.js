@@ -3,12 +3,12 @@ import Http from '../Utils/Http';
 import { UserContext } from '../AppContext';
 import { useHistory, Switch, Route } from 'react-router-dom';
 import { useTheme, useMediaQuery, makeStyles } from '@material-ui/core';
-import MyDiary from '../MyDiary/MyDiary';
 import Charts from '../Charts/Charts';
 import Categories from '../Categories/Categories';
 import CDrawer from './Components/CDrawer';
 import CAppBar from './Components/CAppBar';
 import SearchResult from './SearchResult';
+import { MyDiary } from '../MyDiary/MyDiary';
 
 let http = new Http();
 

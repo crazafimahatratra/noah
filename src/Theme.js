@@ -44,6 +44,9 @@ const commonStyles = makeStyles((theme) => ({
             marginRight: theme.spacing(1),
         },
     },
+    nopadding: {
+        padding: 0,
+    },
 }));
 
 export default function useCommonStyles() {
