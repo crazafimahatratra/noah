@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import Http from '../Utils/Http';
 import { makeStyles, Grid } from '@material-ui/core';
 import { CalendarToday } from '@material-ui/icons';
+import { OperationEditor } from '../MyDiary/MyDiary';
 
 let http = new Http();
 
@@ -20,7 +21,7 @@ const styles = makeStyles((theme) => ({
         boxShadow: "0px 0px 1px rgba(0, 0, 0, 0.1)",
         cursor: "pointer",
         "&:hover": {
-            boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.1)",
+            boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.1)",
         },
     },
     label: {
@@ -50,6 +51,7 @@ export default function SearchResult() {
     const [search, setSearch] = React.useState("");
     const params = useParams();
     const [rows, setRows] = React.useState([]);
+    const [currency, setCurrency] = React.useState("fmg");
     const classes = styles();
     React.useEffect(() => {
         let pattern = localStorage.getItem("search-pattern");
@@ -59,6 +61,36 @@ export default function SearchResult() {
         }).catch(console.error);
     }, [params])
 
+    const [values, setValues] = React.useState({});
+    const [open, setOpen] = React.useState(false);
+    const handleEdit = (row) => (evt) => {
+        setValues({...row, date: new Date(row.date)});
+        setOpen(true);
+    }
+
+    const handleChange = (name, v) => {
+        if (name === "amount") {
+            v = parseInt(v, 10);
+        }
+        if (name === "category") {
+            name = "categoryId";
+            v = v.id;
+        }
+        setValues({ ...values, [name]: v });
+    };
+
+    const handleSave = (evt) => {
+        evt.preventDefault();
+        let amount = currency === "fmg" ? values.amount : values.amount * 5;
+        let row = { ...values, amount: amount };
+        http.put(`operations/${values.id}`, row).then(response => {
+            let index = rows.findIndex(r => r.id === values.id);
+            rows.splice(index, 1, response.data);
+            setRows([...rows]);
+        })
+        setOpen(false);
+    };
+
 
     return (
         <>
@@ -66,7 +98,7 @@ export default function SearchResult() {
             <Grid container spacing={2}>
                 {rows.map(row =>
                     <Grid key={`row-${row.id}`} item xs={6} sm={4}>
-                        <div className={classes.bloc}>
+                        <div className={classes.bloc} onClick={handleEdit(row)}>
                             <div className={classes.label}>
                                 {row.label}
                             </div>
@@ -84,7 +116,11 @@ export default function SearchResult() {
                     </Grid>
                 )}
             </Grid>
-
+            <OperationEditor 
+                open={open} onClose={() => setOpen(false)} onOK={handleSave}
+                values={values} onValueChanged={handleChange}
+                currency={currency} onCurrencyChanged={(cur) => setCurrency(cur)}
+            />
         </>
     )
 }

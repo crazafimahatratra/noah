@@ -114,7 +114,7 @@ function CategoryPicker(props) {
  * 
  * @param {OperationEditorProperties} props 
  */
-function OperationEditor(props) {
+export function OperationEditor(props) {
     const [t,] = useTranslation();
     const commonClasses = useCommonStyles();
     const [anchorDate, setAnchorDate] = React.useState(null);
@@ -134,12 +134,12 @@ function OperationEditor(props) {
     return (
         <>
             <CDialog open={props.open} onClose={props.onClose} onOK={props.onOK} title={t("common.new-entry")}>
-                <CategoryPicker value={props.values.category} onSelect={handleCategorySelected} />
-                <CTextField className={commonClasses.mt1} fullWidth variant="outlined" size="small" onClick={(evt) => setAnchorDate(evt.currentTarget)} value={format(props.values.date, "dd/MM/yyyy")} />
-                <CTextField className={commonClasses.mt1} label={t("my-diary.table.label")} onChange={handleChange("label")} value={props.values.label} fullWidth variant="outlined" size="small" />
+                <CategoryPicker value={props.values?.category} onSelect={handleCategorySelected} />
+                <CTextField className={commonClasses.mt1} fullWidth variant="outlined" size="small" onClick={(evt) => setAnchorDate(evt.currentTarget)} value={format(props.values?.date ?? new Date(), "dd/MM/yyyy")} />
+                <CTextField className={commonClasses.mt1} label={t("my-diary.table.label")} onChange={handleChange("label")} value={props.values?.label} fullWidth variant="outlined" size="small" />
                 <Grid container spacing={1} className={commonClasses.mt1} >
                     <Grid item xs={12} sm={8}>
-                        <CTextField label={t("my-diary.table.amount")} onChange={handleChange("amount")} value={isNaN(props.values.amount) ? "" : props.values.amount.toString()} fullWidth variant="outlined" size="small"
+                        <CTextField label={t("my-diary.table.amount")} onChange={handleChange("amount")} value={isNaN(props.values?.amount) ? "" : props.values?.amount.toString()} fullWidth variant="outlined" size="small"
                             InputProps={{
                                 endAdornment: <InputAdornment><MenuCurrency value={props.currency} onChange={handleCurrencyChanged} /></InputAdornment>,
                                 classes: { adornedEnd: commonClasses.nopadding }
@@ -147,11 +147,11 @@ function OperationEditor(props) {
                         />
                     </Grid>
                     <Grid item xs={12} sm={4}>
-                        <CTextField label={props.currency === "ar" ? "En Fmg" : "En Ariary"} value={props.currency === "ar" ? props.values.amount * 5 : props.values.amount / 5} fullWidth variant="outlined" disabled size="small" />
+                        <CTextField label={props.currency === "ar" ? "En Fmg" : "En Ariary"} value={props.currency === "ar" ? props.values?.amount * 5 : props.values?.amount / 5} fullWidth variant="outlined" disabled size="small" />
                     </Grid>
                 </Grid>
                 <Popover PaperProps={{ style: { height: 400 } }} anchorOrigin={{ horizontal: "left", vertical: "bottom" }} anchorEl={anchorDate} open={Boolean(anchorDate)} onClose={() => setAnchorDate(null)}>
-                    <Calendar date={props.values.date} onChange={item => { handleDateChanged("date", item); setAnchorDate(null); }} />
+                    <Calendar date={props.values?.date} onChange={item => { handleDateChanged("date", item); setAnchorDate(null); }} />
                 </Popover>
             </CDialog>
         </>)
