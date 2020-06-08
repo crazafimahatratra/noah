@@ -3,8 +3,8 @@ import CTitle from '../Components/CTitle';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import Http from '../Utils/Http';
-import { makeStyles, Grid, Card, CardContent, CardActions, IconButton } from '@material-ui/core';
-import { CalendarToday, MoreHoriz, Edit, PinDrop, Delete } from '@material-ui/icons';
+import { makeStyles, Grid, Card, CardContent, CardActions } from '@material-ui/core';
+import { CalendarToday, Edit, PinDrop, Delete } from '@material-ui/icons';
 import { OperationEditor } from '../MyDiary/MyDiary';
 
 let http = new Http();
@@ -71,7 +71,7 @@ export default function SearchResult() {
 
     const [values, setValues] = React.useState({});
     const [open, setOpen] = React.useState(false);
-    const handleEdit = (row) => (evt) => {
+    const handleEdit = (row) => () => {
         setValues({ ...row, date: new Date(row.date) });
         setOpen(true);
     }
