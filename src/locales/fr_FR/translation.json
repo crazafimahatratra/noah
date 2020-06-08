@@ -89,6 +89,7 @@
   },
   "my-diary": {
     "confirm-delete": "Etes-vous vraiment sûr de vouloir supprimer cette ligne ?",
+    "edit": "Modifier l'opération",
     "subtitle": "Entrées/Sorties",
     "table": {
       "amount": "Montant",

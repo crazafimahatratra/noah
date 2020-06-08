@@ -133,7 +133,7 @@ export function OperationEditor(props) {
 
     return (
         <>
-            <CDialog open={props.open} onClose={props.onClose} onOK={props.onOK} title={t("common.new-entry")}>
+            <CDialog open={props.open} onClose={props.onClose} onOK={props.onOK} title={props.values?.id ? t("my-diary.edit") : t("common.new-entry")}>
                 <CategoryPicker value={props.values?.category} onSelect={handleCategorySelected} />
                 <CTextField className={commonClasses.mt1} fullWidth variant="outlined" size="small" onClick={(evt) => setAnchorDate(evt.currentTarget)} value={format(props.values?.date ?? new Date(), "dd/MM/yyyy")} />
                 <CTextField className={commonClasses.mt1} label={t("my-diary.table.label")} onChange={handleChange("label")} value={props.values?.label} fullWidth variant="outlined" size="small" />

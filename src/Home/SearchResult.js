@@ -3,8 +3,8 @@ import CTitle from '../Components/CTitle';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import Http from '../Utils/Http';
-import { makeStyles, Grid } from '@material-ui/core';
-import { CalendarToday } from '@material-ui/icons';
+import { makeStyles, Grid, Card, CardContent, CardActions, IconButton } from '@material-ui/core';
+import { CalendarToday, MoreHoriz, Edit, PinDrop, Delete } from '@material-ui/icons';
 import { OperationEditor } from '../MyDiary/MyDiary';
 
 let http = new Http();
@@ -14,14 +14,15 @@ const styles = makeStyles((theme) => ({
         borderColor: theme.palette.divider,
         borderWidth: 1,
         borderStyle: "solid",
-        padding: theme.spacing(2),
         borderRadius: 5,
         transitionProperty: "box-shadow",
         transitionDuration: "300ms",
         boxShadow: "0px 0px 1px rgba(0, 0, 0, 0.1)",
         cursor: "pointer",
+        background: "#FAFAFE",
         "&:hover": {
             boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.1)",
+            background: "white",
         },
     },
     label: {
@@ -44,6 +45,13 @@ const styles = makeStyles((theme) => ({
         fontSize: 18,
         color: "#829299",
     },
+    buttons: {
+        color: theme.palette.grey[700],
+        fontSize: 16,
+        "&:hover": {
+            color: theme.palette.primary.main,
+        },
+    },
 }))
 
 export default function SearchResult() {
@@ -64,7 +72,7 @@ export default function SearchResult() {
     const [values, setValues] = React.useState({});
     const [open, setOpen] = React.useState(false);
     const handleEdit = (row) => (evt) => {
-        setValues({...row, date: new Date(row.date)});
+        setValues({ ...row, date: new Date(row.date) });
         setOpen(true);
     }
 
@@ -98,25 +106,33 @@ export default function SearchResult() {
             <Grid container spacing={2}>
                 {rows.map(row =>
                     <Grid key={`row-${row.id}`} item xs={6} sm={4}>
-                        <div className={classes.bloc} onClick={handleEdit(row)}>
-                            <div className={classes.label}>
-                                {row.label}
+                        <Card className={classes.bloc}>
+                            <CardContent>
+                                <div className={classes.label}>
+                                    {row.label}
+                                </div>
+                                <div className={classes.category}>
+                                    <span style={{ width: 8, height: 8, borderRadius: 20, display: 'inline-flex', background: row.category?.color ?? '#EEEEEE', marginRight: '0.5rem' }}></span>
+                                    {row.category?.label}
+                                </div>
+                                <div className={classes.date}>
+                                    <CalendarToday />{new Intl.DateTimeFormat('fr').format(new Date(row.date))}
+                                </div>
+                                <div className={classes.amount}>
+                                    {new Intl.NumberFormat('fr').format(row.amount)} Fmg
                             </div>
-                            <div className={classes.category}>
-                                <span style={{ width: 8, height: 8, borderRadius: 20, display: 'inline-flex', background: row.category?.color ?? '#EEEEEE', marginRight: '0.5rem' }}></span>
-                                {row.category?.label}
-                            </div>
-                            <div className={classes.date}>
-                                <CalendarToday />{new Intl.DateTimeFormat('fr').format(new Date(row.date))}
-                            </div>
-                            <div className={classes.amount}>
-                                {new Intl.NumberFormat('fr').format(row.amount)} Fmg
-                            </div>
-                        </div>
+                            </CardContent>
+                            <CardActions>
+                                <Edit className={classes.buttons} onClick={handleEdit(row)} />
+                                <PinDrop className={classes.buttons} />
+                                <div style={{flexGrow: 1}}></div>
+                                <Delete className={classes.buttons} />
+                            </CardActions>
+                        </Card>
                     </Grid>
                 )}
             </Grid>
-            <OperationEditor 
+            <OperationEditor
                 open={open} onClose={() => setOpen(false)} onOK={handleSave}
                 values={values} onValueChanged={handleChange}
                 currency={currency} onCurrencyChanged={(cur) => setCurrency(cur)}

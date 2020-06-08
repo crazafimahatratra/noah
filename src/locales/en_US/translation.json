@@ -89,6 +89,7 @@
   },
   "my-diary": {
     "confirm-delete": "Do you really want to delete this operation ?",
+    "edit": "Edit the operation",
     "subtitle": "Income/Outcome",
     "table": {
       "amount": "Amount",
